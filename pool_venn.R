@@ -3,8 +3,13 @@
 # ==========================================================================
 cat("Clear and load!\n")
 
-setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Code")
-
+if (Sys.info()["user"] == "william.midgley") {
+  setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity")
+} else if (Sys.info()["user"] == "Stuart.Bedston") {
+  cat("Put your wd in, Stu!\n")
+} else {
+  cat("Is that you, Utkarsh? Add your name here\n") 
+}
 rm(list = ls())
 
 library(tidyverse)
@@ -15,10 +20,10 @@ library(lubridate)
 library(scales)
 
 # England
-t_venn_england <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/england/vacc_venn_diag_cohort.csv")
+t_venn_england <- read.csv("d-venn/vacc_venn_diag_cohort.csv")
 # Wales
-t_venn_wales_main <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/export_19-12-2022_diagrams/exploratory_diagrams/t_ea_flu_c19.csv") %>% select(-p)
-t_venn_wales_preg <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/export_19-12-2022_diagrams/exploratory_diagrams_preg/t_ea_flu_c19_preg.csv") %>% select(-p)
+t_venn_wales_main <- read.csv("d-venn/t_ea_flu_c19.csv") %>% select(-p)
+t_venn_wales_preg <- read.csv("d-venn/t_ea_flu_c19_preg.csv") %>% select(-p)
 
 # I exported the wrong data, so I'm getting it from the report that was approved also :P
 

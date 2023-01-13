@@ -11,7 +11,7 @@ if (Sys.info()["user"] == "william.midgley") {
 } else if (Sys.info()["user"] == "Stuart.Bedston") {
   cat("Put your wd in, Stu!\n")
 } else {
-  cat("Is that you, Utkarsh?\n") 
+  cat("Is that you, Utkarsh? Add your name here\n") 
 }
 
 library(tidyverse)
@@ -22,13 +22,13 @@ library(lubridate)
 library(scales)
 
 # England
-d_weekly_vacc_england_main <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/england/vacc_uptake_full_cohort.csv")
-d_weekly_vacc_england_preg <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/england/vacc_uptake_preg_cohort.csv")
+d_weekly_vacc_england_main <- read.csv("d-weekly-vacc/vacc_uptake_full_cohort.csv")
+d_weekly_vacc_england_preg <- read.csv("d-weekly-vacc/vacc_uptake_preg_cohort.csv")
 # Wales
-d_weekly_vacc_wales_main_c19 <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/export_19-12-2022_diagrams/exploratory_diagrams/d_c19_vacc_week.csv")
-d_weekly_vacc_wales_main_flu <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/export_19-12-2022_diagrams/exploratory_diagrams/d_flu_vacc_week.csv")
-d_weekly_vacc_wales_preg_c19 <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/export_19-12-2022_diagrams/exploratory_diagrams_preg/d_c19_vacc_week_preg.csv")
-d_weekly_vacc_wales_preg_flu <- read.csv("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/export_19-12-2022_diagrams/exploratory_diagrams_preg/d_flu_vacc_week_preg.csv")
+d_weekly_vacc_wales_main_c19 <- read.csv("d-weekly-vacc/d_c19_vacc_week.csv")
+d_weekly_vacc_wales_main_flu <- read.csv("d-weekly-vacc/d_flu_vacc_week.csv")
+d_weekly_vacc_wales_preg_c19 <- read.csv("d-weekly-vacc/d_c19_vacc_week_preg.csv")
+d_weekly_vacc_wales_preg_flu <- read.csv("d-weekly-vacc/d_flu_vacc_week_preg.csv")
 
 cbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 cbPalette2 <- c("#0072B2", "#D55E00", "#CC79A7", "#E69F00", "#56B4E9", "#009E73", "#F0E442")

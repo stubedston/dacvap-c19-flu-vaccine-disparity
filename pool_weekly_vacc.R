@@ -1,11 +1,18 @@
+
 # ==========================================================================
 # Clear and load
 # ==========================================================================
 cat("Clear and load!\n")
 
-setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Code")
-
 rm(list = ls())
+
+if (Sys.info()["user"] == "william.midgley") {
+  setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity")
+} else if (Sys.info()["user"] == "Stuart.Bedston") {
+  cat("Put your wd in, Stu!\n")
+} else {
+  cat("Is that you, Utkarsh?\n") 
+}
 
 library(tidyverse)
 library(patchwork)

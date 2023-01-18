@@ -144,7 +144,7 @@ my_theme <- function() {
     panel.grid.minor.x   = element_blank(),
     panel.grid.minor.y   = element_blank(),
     legend.title         = element_blank(),
-    legend.position      = c(0.99, 0.98),
+    legend.position      = c(0.99, 0.97),
     legend.justification = c(1, 1),
     legend.key.height    = unit(1, "lines"),
     legend.key.width     = unit(1, "lines"),
@@ -180,7 +180,7 @@ p_c19_main <-
   scale_fill_manual(
     values = cbPalette[3:1],
     labels = c("Dose 3", "Dose 2", "Dose 1"),
-    guide = guide_legend(reverse = TRUE)
+    guide = guide_legend(reverse = TRUE, label.position = "left")
   ) +
   my_theme() +
   theme(
@@ -209,7 +209,8 @@ p_flu_main <-
   ) +
   scale_fill_manual(
     values = cbPalette2,
-    labels = c("Winter 2020/21", "Winter 2021/22")
+    labels = c("Winter 2020/21", "Winter 2021/22"),
+    guide = guide_legend(label.position = "left")
   ) +
   my_theme() +
   theme(
@@ -260,8 +261,7 @@ p_c19_preg <-
   ) +
   scale_fill_manual(
     values = cbPalette[3:1],
-    labels = c("Dose 3", "Dose 2", "Dose 1"),
-    guide = guide_legend(reverse = TRUE)
+    labels = c("Dose 3", "Dose 2", "Dose 1")
   ) +
   my_theme() +
   theme(

@@ -139,14 +139,16 @@ y_limits_preg <- c(0, 23000)
 # ==========================================================================
 
 my_theme <- function() {
-  theme_bw(base_size = 9) +
+  theme_bw(base_size = 10) +
   theme(
-    panel.grid.minor.x = element_blank(),
-    legend.title = element_blank(),
-    legend.position = c(0.01, 0.99),
-    legend.justification = c(0, 1),
-    legend.key.height = unit(1, "lines"),
-    legend.key.width = unit(1, "lines")
+    panel.grid.minor.x   = element_blank(),
+    panel.grid.minor.y   = element_blank(),
+    legend.title         = element_blank(),
+    legend.position      = c(0.99, 0.99),
+    legend.justification = c(1, 1),
+    legend.key.height    = unit(1, "lines"),
+    legend.key.width     = unit(1, "lines"),
+    legend.margin        = margin(t=-0.25,l=0.05,b=0.0,r=0.05, unit='cm')
   )
 }
 
@@ -210,7 +212,9 @@ p_flu_main <-
     values = cbPalette2,
     labels = c("Winter 2020/21", "Winter 2021/22")
   ) +
-  my_theme()
+  my_theme() +
+  theme(
+  )
 
 p_main <-
   p_c19_main +
@@ -221,7 +225,7 @@ p_main <-
     heights = c(10, -1.5, 10)
   ) +
   plot_annotation(
-    title = "(a) Main cohort",
+    title = "(a) Main cohort uptake",
     theme = theme(title = element_text(size = 10))
   )
 
@@ -293,7 +297,9 @@ p_flu_preg <-
     labels = c("Winter 2020/21", "Winter 2021/22")
   ) +
   my_theme() +
-  theme(legend.position = "none")
+  theme(
+    legend.position = "none"
+  )
 
 p_preg <-
   p_c19_preg +
@@ -304,7 +310,7 @@ p_preg <-
     heights = c(10, -1.5, 10)
   ) +
   plot_annotation(
-    title = "(b) Pregnancy cohort",
+    title = "(b) Pregnancy cohort uptake",
     theme = theme(title = element_text(size = 10))
   )
 
@@ -322,6 +328,14 @@ p_weekly
 # Save plots
 # ==========================================================================
 cat("saving...\n")
+
+ggsave(
+  plot     = p_weekly,
+  filename = "p_weekly_vacc.png",
+  path     = "Results/Plots",
+  width    = 7.5,
+  height   = 5
+)
 
 ggsave(
   plot     = p_main,

@@ -7,11 +7,13 @@ cat("Clear and load!\n")
 rm(list = ls())
 
 if (Sys.info()["user"] == "william.midgley") {
+  cat("Hi Will!\n")
   setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity")
 } else if (Sys.info()["user"] == "Stuart.Bedston") {
-  cat("Put your wd in, Stu!\n")
+  cat("Hi Stu!\n")
+  setwd("~/Projects/dacvap-c19-flu-vaccine-disparity")
 } else {
-  cat("Is that you, Utkarsh? Add your name here\n") 
+  cat("Is that you, Utkarsh?! Add your name here\n") 
 }
 
 library(tidyverse)
@@ -123,7 +125,7 @@ x_limits <- c(
 x_breaks <- seq(
   from = ymd('2020-09-01'),
   to   = ymd('2022-03-31'),
-  by   = "6 months"
+  by   = "3 months"
 )
 
 y_limits <- c(0, 500000)
@@ -133,6 +135,18 @@ y_limits_preg <- c(0, 23000)
 # ==========================================================================
 # Main cohort
 # ==========================================================================
+
+my_theme <- function() {
+  theme_bw(base_size = 9) +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    legend.title = element_blank(),
+    legend.position = c(0.01, 0.99),
+    legend.justification = c(0, 1),
+    legend.key.height = unit(1, "lines"),
+    legend.key.width = unit(1, "lines")
+  )
+}
 
 p_c19_main <-
   d_weekly_vacc_pooled_main_c19 %>%
@@ -149,20 +163,19 @@ p_c19_main <-
     date_labels = "%b\n%Y"
   ) +
   scale_y_continuous(
-    name = "Number per week",
+    name = "COVID-19 vaccinations",
     limits = y_limits,
     breaks = breaks_pretty(),
     labels = comma
-  ) +
-  labs(
-    fill = "Vaccine Dose"
   ) +
   scale_fill_manual(
     values = cbPalette,
     labels = c("Dose 1", "Dose 2", "Dose 3")
   ) +
-  ggtitle(
-    "COVID-19 vaccinations"
+  my_theme() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
   )
 
 p_flu_main <-
@@ -180,29 +193,29 @@ p_flu_main <-
     date_labels = "%b\n%Y"
   ) +
   scale_y_continuous(
-    name = "Number per week",
+    name = "Influenza vaccinations",
     limits = y_limits,
     breaks = breaks_pretty(),
     labels = comma
   ) +
-  labs(
-    fill = "Vaccine Dose"
-  ) +
   scale_fill_manual(
     values = cbPalette2,
-    labels = c("Winter 2020", "Winter 2021")
+    labels = c("Winter 2020/21", "Winter 2021/22")
   ) +
-  ggtitle(
-    "Influenza vaccinations"
+  my_theme()
+
+p_main <-
+  p_c19_main /
+  p_flu_main +
+  plot_annotation(
+    title = "(a) Main cohort"
   )
 
-p_main <- p_c19_main / p_flu_main
-
+p_main
 
 # ==========================================================================
 # Pregnant cohort
 # ==========================================================================
-
 
 p_c19_preg <-
   d_weekly_vacc_pooled_preg_c19 %>%
@@ -219,20 +232,20 @@ p_c19_preg <-
     date_labels = "%b\n%Y"
   ) +
   scale_y_continuous(
-    name = "Number per week",
+    name = "COVID-19 vaccinations",
     limits = y_limits_preg,
     breaks = breaks_pretty(),
     labels = comma
-  ) +
-  labs(
-    fill = "Vaccine Dose"
   ) +
   scale_fill_manual(
     values = cbPalette,
     labels = c("Dose 1", "Dose 2", "Dose 3")
   ) +
-  ggtitle(
-    "COVID-19 vaccinations"
+  my_theme() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.position = "none"
   )
 
 p_flu_preg <-
@@ -250,28 +263,52 @@ p_flu_preg <-
     date_labels = "%b\n%Y"
   ) +
   scale_y_continuous(
-    name = "Number per week",
+    name =  "Influenza vaccinations",
     limits = y_limits_preg,
     breaks = breaks_pretty(),
     labels = comma
   ) +
-  labs(
-    fill = "Vaccine Dose"
-  ) +
   scale_fill_manual(
     values = cbPalette2,
-    labels = c("Winter 2020", "Winter 2021")
+    labels = c("Winter 2020/21", "Winter 2021/22")
   ) +
-  ggtitle(
-    "Influenza vaccinations"
+  my_theme() +
+  theme(legend.position = "none")
+
+p_preg <-
+  p_c19_preg /
+  p_flu_preg + 
+  plot_annotation(
+    title = "(b) Pregnancy cohort"
   )
 
-p_preg <- p_c19_preg / p_flu_preg
+p_preg
+
+# ==========================================================================
+# Ultimate Figure 1
+# ==========================================================================
+
+p_weekly <- wrap_elements(p_main) | wrap_elements(p_preg)
+
+p_weekly
 
 # ==========================================================================
 # Save plots
 # ==========================================================================
 cat("saving...\n")
 
-ggsave("p_weekly_vacc_main.png", p_main, "png", "C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/Plots", width = 10, height = 10)
-ggsave("p_weekly_vacc_preg.png", p_preg, "png", "C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/Plots", width = 10, height = 10)
+ggsave(
+  plot     = p_main,
+  filename = "p_weekly_vacc_main.png",
+  path     = "Results/Plots",
+  width    = 10,
+  height   = 10
+)
+
+ggsave(
+  plot     = p_preg,
+  filename = "p_weekly_vacc_preg.png",
+  path     = "Results/Plots",
+  width    = 10,
+  height   = 10
+)

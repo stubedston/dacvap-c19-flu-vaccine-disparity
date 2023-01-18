@@ -144,11 +144,12 @@ my_theme <- function() {
     panel.grid.minor.x   = element_blank(),
     panel.grid.minor.y   = element_blank(),
     legend.title         = element_blank(),
-    legend.position      = c(0.99, 0.99),
+    legend.position      = c(0.99, 0.98),
     legend.justification = c(1, 1),
     legend.key.height    = unit(1, "lines"),
     legend.key.width     = unit(1, "lines"),
-    legend.margin        = margin(t=-0.25,l=0.05,b=0.0,r=0.05, unit='cm')
+    legend.margin        = margin(t=-0.25,l=0.05,b=0.0,r=0.05, unit='cm'),
+    axis.title.x         = element_blank()
   )
 }
 
@@ -166,7 +167,6 @@ p_c19_main <-
   )) +
   geom_col() +
   scale_x_date(
-    name = "",
     limits = x_limits,
     breaks = x_breaks,
     date_labels = "%b\n%Y"
@@ -197,7 +197,6 @@ p_flu_main <-
   )) +
   geom_col() +
   scale_x_date(
-    name = "",
     limits = x_limits,
     breaks = x_breaks,
     date_labels = "%b\n%Y"
@@ -222,7 +221,7 @@ p_main <-
   p_flu_main +
   plot_layout(
     ncol = 1,
-    heights = c(10, -1.5, 10)
+    heights = c(15, -1.5, 15)
   ) +
   plot_annotation(
     title = "(a) Main cohort uptake",
@@ -249,7 +248,6 @@ p_c19_preg <-
   )) +
   geom_col() +
   scale_x_date(
-    name = "",
     limits = x_limits,
     breaks = x_breaks,
     date_labels = "%b\n%Y"
@@ -281,7 +279,6 @@ p_flu_preg <-
   )) +
   geom_col() +
   scale_x_date(
-    name = "",
     limits = x_limits,
     breaks = x_breaks,
     date_labels = "%b\n%Y"
@@ -307,7 +304,7 @@ p_preg <-
   p_flu_preg + 
   plot_layout(
     ncol = 1,
-    heights = c(10, -1.5, 10)
+    heights = c(15, -1.1, 15) # no idea why this works - dont edit what you dont understand is what my gran always says
   ) +
   plot_annotation(
     title = "(b) Pregnancy cohort uptake",
@@ -332,7 +329,7 @@ cat("saving...\n")
 ggsave(
   plot     = p_weekly,
   filename = "p_weekly_vacc.png",
-  path     = "Results/Plots",
+  path     = "plots",
   width    = 7.5,
   height   = 5
 )
@@ -351,12 +348,4 @@ ggsave(
   path     = "plots",
   width    = 10,
   height   = 10
-)
-
-ggsave(
-  plot     = p_weekly,
-  filename = "p_weekly_vacc_both.png",
-  path     = "plots",
-  width    = 7.5,
-  height   = 5.9
 )

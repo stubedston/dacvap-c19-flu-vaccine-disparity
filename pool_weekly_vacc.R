@@ -340,7 +340,7 @@ ggsave(
 ggsave(
   plot     = p_main,
   filename = "p_weekly_vacc_main.png",
-  path     = "Results/Plots",
+  path     = "plots",
   width    = 10,
   height   = 10
 )
@@ -348,7 +348,15 @@ ggsave(
 ggsave(
   plot     = p_preg,
   filename = "p_weekly_vacc_preg.png",
-  path     = "Results/Plots",
+  path     = "plots",
   width    = 10,
   height   = 10
+)
+
+ggsave(
+  plot     = p_weekly,
+  filename = "p_weekly_vacc_both.png",
+  path     = "plots",
+  width    = 7.5,
+  height   = 5.9
 )

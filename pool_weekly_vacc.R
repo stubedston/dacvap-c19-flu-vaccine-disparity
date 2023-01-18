@@ -21,6 +21,7 @@ library(patchwork)
 library(grid)
 library(eulerr)
 library(lubridate)
+library(forcats)
 library(scales)
 
 # England
@@ -96,6 +97,7 @@ d_weekly_vacc_wales_preg_flu <- process.wales(d_weekly_vacc_wales_preg_flu)
 # Pool England and Wales
 # ==========================================================================
 cat("pooling data...\n")
+
 pool.data <- function(england, wales) {
 	full_join(england, wales) %>%
 	mutate(
@@ -150,6 +152,11 @@ my_theme <- function() {
 
 p_c19_main <-
   d_weekly_vacc_pooled_main_c19 %>%
+  as_tibble() %>% 
+  mutate(
+    vacc_seq = factor(vacc_seq),
+    vacc_seq = fct_rev(vacc_seq)
+  ) %>% 
   ggplot(aes(
     x = vacc_date,
     y = n,
@@ -169,8 +176,9 @@ p_c19_main <-
     labels = comma
   ) +
   scale_fill_manual(
-    values = cbPalette,
-    labels = c("Dose 1", "Dose 2", "Dose 3")
+    values = cbPalette[3:1],
+    labels = c("Dose 3", "Dose 2", "Dose 1"),
+    guide = guide_legend(reverse = TRUE)
   ) +
   my_theme() +
   theme(
@@ -205,10 +213,16 @@ p_flu_main <-
   my_theme()
 
 p_main <-
-  p_c19_main /
+  p_c19_main +
+  plot_spacer() +
   p_flu_main +
+  plot_layout(
+    ncol = 1,
+    heights = c(10, -1.5, 10)
+  ) +
   plot_annotation(
-    title = "(a) Main cohort"
+    title = "(a) Main cohort",
+    theme = theme(title = element_text(size = 10))
   )
 
 p_main
@@ -219,6 +233,11 @@ p_main
 
 p_c19_preg <-
   d_weekly_vacc_pooled_preg_c19 %>%
+  as_tibble() %>% 
+  mutate(
+    vacc_seq = factor(vacc_seq),
+    vacc_seq = fct_rev(vacc_seq)
+  ) %>% 
   ggplot(aes(
     x = vacc_date,
     y = n,
@@ -238,8 +257,9 @@ p_c19_preg <-
     labels = comma
   ) +
   scale_fill_manual(
-    values = cbPalette,
-    labels = c("Dose 1", "Dose 2", "Dose 3")
+    values = cbPalette[3:1],
+    labels = c("Dose 3", "Dose 2", "Dose 1"),
+    guide = guide_legend(reverse = TRUE)
   ) +
   my_theme() +
   theme(
@@ -276,10 +296,16 @@ p_flu_preg <-
   theme(legend.position = "none")
 
 p_preg <-
-  p_c19_preg /
+  p_c19_preg +
+  plot_spacer() +
   p_flu_preg + 
+  plot_layout(
+    ncol = 1,
+    heights = c(10, -1.5, 10)
+  ) +
   plot_annotation(
-    title = "(b) Pregnancy cohort"
+    title = "(b) Pregnancy cohort",
+    theme = theme(title = element_text(size = 10))
   )
 
 p_preg

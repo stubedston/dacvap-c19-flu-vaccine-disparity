@@ -4,12 +4,15 @@
 cat("Clear and load!\n")
 
 if (Sys.info()["user"] == "william.midgley") {
+  cat("Hi Will!\n")
   setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity")
 } else if (Sys.info()["user"] == "Stuart.Bedston") {
-  cat("Put your wd in, Stu!\n")
+  cat("Hi Stu!\n")
+  setwd("~/Projects/dacvap-c19-flu-vaccine-disparity")
 } else {
-  cat("Is that you, Utkarsh? Add your name here\n") 
+  cat("Is that you, Utkarsh?! Add your name here\n") 
 }
+
 rm(list = ls())
 
 library(tidyverse)

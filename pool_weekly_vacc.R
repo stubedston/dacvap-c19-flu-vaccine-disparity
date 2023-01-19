@@ -304,7 +304,7 @@ p_preg <-
   p_flu_preg + 
   plot_layout(
     ncol = 1,
-    heights = c(15, -1.1, 15) # no idea why this works - dont edit what you dont understand is what my gran always says
+    heights = c(15, -1.5, 15) # no idea why this works - dont edit what you dont understand is what my gran always says
   ) +
   plot_annotation(
     title = "(b) Pregnancy cohort uptake",

@@ -15,7 +15,19 @@ if (Sys.info()["user"] == "william.midgley") {
 
 rm(list = ls())
 
-invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE))
+if (!is.null(sessionInfo()$otherPkgs)) {
+  suppressWarnings(
+    invisible(
+      lapply(
+        paste0('package:', names(sessionInfo()$otherPkgs)
+          ),
+        detach,
+        character.only=TRUE,
+        unload=TRUE
+        )
+      )
+    )
+}
 
 # ==========================================================================
 # Load

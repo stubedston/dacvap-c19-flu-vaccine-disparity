@@ -1,0 +1,497 @@
+---
+title  : "Comparing uptake disparities for COVID-19 and influenza vaccination amongst vulnerable adults and the elderly: Wales, Winter 2020 and 2021"
+date   : "Date compiled: `r format(Sys.time(), '%a %d %B %Y')`"
+author : "[Stuart Bedston](mailto:stuart.bedston@swansea.ac.uk), [Will Midgley](mailto:w.h.midgley@swansea.ac.uk)"
+---
+
+```{r setup, include=FALSE}
+
+source("r_clear_and_load.r")
+
+d_cohort <- qread(s_drive("d_cohort_eligible.qs"))
+qload("results/exploratory_vacc_analysis.qsm")
+qload("results/exploratory_vacc_analysis_preg.qsm")
+
+options(
+    knitr.kable.NA = ''
+)
+
+knitr::opts_chunk$set(
+    fig.width  = 6,
+    fig.height = 5,
+    echo = FALSE,
+    message = FALSE,
+    warning = FALSE
+)
+
+```
+
+## Message to SAIL reviewers
+
+Please read `99_report.html` first, this gives context to the other files I
+have submitted, and explains the data sources used, the research being done,
+and the suppression applied to each bit of output.
+
+This is a re-run of a previous request, but using more up to date data and slightly different inclusion criteria (no disclosure risk as all previous and current data request counts have been rounded to the nearest 10)
+
+In general, the following suppression rules have been applied:
+
+ - Counts between 1 and 9 have been replaced with 10
+ - Counts 10 and above have been rounded to nearest 10
+ - Column percentages to 1 decimal place
+ - Odds ratios are presented to 3 decimal places
+ - Standard error and p values to 4 decimal places
+ - Wald stats are to 2 decimal places
+
+Exception is for plots, exact numbers have been used, except for numbers
+between 1 and 9, they have been replaced with a value of 10.
+
+
+CSVs requested out:
+
+Weekly vacc plots:
+
+- d_c19_vacc_week.csv
+- d_flu_vacc_week.csv
+- d_c19_vacc_week_preg.csv
+- d_flu_vacc_week_preg.csv
+
+Venn diagrams:
+
+- t_ea_flu_c19.csv
+- t_ea_flu_c19_preg.csv
+
+Descriptive stats
+
+- imputed_overall_descriptive.csv
+- overall_descriptive_preg_imputed.csv
+
+Coefficiants:
+
+- overall_coefs.csv
+- overall_coefs_preg.csv
+- interaction_coefs.csv
+- interaction_coefs_preg.csv
+
+Sensitivity Analysis:
+
+- sa_d_c19_vacc_week_preg.csv
+- sa_d_flu_vacc_week_preg.csv
+- sa_overall_descriptive_preg_imputed.csv
+- sa_overall_coefs_preg.csv
+- sa_interaction_coefs_preg.csv
+
+## Research aim
+
+- Analyse uptake of first, second and booster doses for COVID-19 vaccines and the uptake of 2020 and 2021 seasonal flu vaccines in vulnerable and the elderly, and pregnant adults in Wales.
+
+## Study design
+
+ - Study on an e-cohort of adults alive and living in Wales between 1st September 2020 and 31st March 2022.
+ - Vulnerable adults (who were not pregnant during the study) and the elderly getting all three covid vaccines and/or both seasonal flu vaccines in the 
+    timeframe were modelled with logistic regression. COVID and flu vaccines were modelled separately.
+ - Models were created for the overall cohort, and then interaction models were performed comparing effects of coefficients between 1st and 5th WIMD quintiles.
+ - Pregnant women under the age of 50 who were eligible for at least one COVID-19 dose and at least one flu vaccination while they were pregnant were modelled separately per vaccine type (COVID/flu)
+     + Eligibility for COVID-19 vaccination was determined by age and clinical vulnerability and not pregnancy between september 2020 and march 2022, therefore eligibility for study is based on age and clinical vulnerability, and when they were pregnant during study period.
+     
+#### Sensitivity analysis
+
+ Our requirement that pregnant women must be eligible for both COVID and flu vaccination during their pregnacy excludes a sizable number of women who were eligible for the first flu vaccination (see eligibility table). Therefore, we performed a sensitivity analysis by performing analyses on pregnant women separated by their eligibility for each vaccine type (i.e. uptake of the COVID-19 vaccine was analysed in those eligible for any dose of the covid vaccine during pregnancy, and uptake of the flu vaccine was analysed in those eligible for either flu vaccine during their pregnancy).
+
+
+### Data sources
+
+- **C19_COHORT20**:
+    - **WDSD**: Welsh Demographic Service Dataset
+    - **WLGP**: Welsh Longitudinal General Practice data
+- **C19_COHORT_MORTALITY**:
+    - **ADDE**: Annual District Death Extract
+    - **CDDS**: COVID-19 Consolidated Deaths Data Set
+    - **WDSD**: Welsh Demographic Service Dataset
+- **(RRDA_)CVVD**: COVID-19 vaccination records from the Welsh Immunisation System
+- **PEDW**: Patient Episode Dataset for Wales
+- **WDSD**: Welsh Demographic Service Dataset
+- **WLGP**: Welsh Longitudinal General Practice data
+- **CENW**: ONS census for Wales
+- **NCCH**: National Community Child Health data
+- **MIDS**: Maternity Indicators Dataset
+- **ADBE**: Annual District Birth Extract
+
+
+### Analysis
+
+ - Logistic regression models of uptake
+ - Outcome was whether or not the patient completed their vaccination course. Completion is defined as:
+    - Vulnerable adults and elderly:
+        + COVID: All three vaccines taken in the study period
+        + Flu: Both seasonal vaccines taken between 01-09 and 31-03 of their respective year
+    - Pregnant women
+        + COVID/Flu: Any vaccine taken during gestation period
+
+#### Table: Cohort selection
+
+- Counts rounded to nearest 10, percentages rounded to 0.1%
+- No CSV
+
+```{r}
+# raw data 
+t_cohort_selection_raw <- qread(s_drive("t_sample_selection_overall_raw.qs"))
+
+# for export
+t_cohort_selection <-
+    qread("results/t_sample_selection_overall.qs")
+
+t_cohort_selection %>%
+  kable(
+    format.args = list(big.mark = ","),
+    align = c("l", "r", "r")
+  ) %>%
+  kable_pretty()
+
+```
+
+#### Table: Eligibility criteria
+
+- Counts rounded to nearest 10, percentages rounded to 0.1%
+- No CSV
+
+```{r}
+# raw data
+t_eligible_raw <- qread(s_drive("t_eligible_raw.qs"))
+
+t_eligible <- qread("results/t_eligible.qs")
+
+t_eligible %>%
+  kable(
+    format.args = list(big.mark = ","),
+    align = c("l", "r", "r")
+  ) %>%
+  kable_pretty()
+
+
+```
+### Exploratory analysis
+
+The following diagrams provide an overview of vaccination. I am requesting out (suppressed) data used to create these diagrams **in order to pool with data from England**.
+
+### Weekly vaccinations
+
+This plot shows number of vaccinations each week where counts are rounded to nearest 10 and counts below 10 are suppressed.
+
+Plots are shown for main cohort and pregnant cohort seperately.
+
+Processed and suppressed data used to create the plot has been requested for export.
+
+CSVs of data used to create this plot:
+
+- d_c19_vacc_week.csv
+- d_flu_vacc_week.csv
+
+- d_c19_vacc_week_preg.csv
+- d_flu_vacc_week_preg.csv
+
+- sa_d_c19_vacc_week_preg.csv
+- sa_d_flu_vacc_week_preg.csv
+
+#### Main cohort
+
+```{r, fig.width = 10, fig.height = 10}
+
+p_ea_vacc_week
+write.csv(d_c19_vacc_week, "results/main_analysis/exploratory_diagrams/d_c19_vacc_week.csv", row.names = FALSE)
+write.csv(d_flu_vacc_week, "results/main_analysis/exploratory_diagrams/d_flu_vacc_week.csv", row.names = FALSE)
+
+```
+
+#### Pregnant cohort
+
+(Vaccinations taken during pregnancy by women eligible for at least one flu and covid vaccination)
+
+```{r, fig.width = 10, fig.height = 10}
+
+p_ea_vacc_week_preg
+write.csv(d_c19_vacc_week_preg, "results/pregnant/exploratory_diagrams_preg/d_c19_vacc_week_preg.csv", row.names = FALSE)
+write.csv(d_flu_vacc_week_preg, "results/pregnant/exploratory_diagrams_preg/d_flu_vacc_week_preg.csv", row.names = FALSE)
+```
+
+##### Sensitivity analysis
+
+(Vaccinations taken during pregnancy by women eligible for at least one flu vaccination for flu uptake and at least one covid vaccination for covid uptake)
+
+```{r, fig.width = 10, fig.height = 10}
+
+qload(s_drive("sa_exploratory_vacc_analysis_preg.qsm"))
+
+p_ea_vacc_week_preg
+write.csv(d_c19_vacc_week_preg, "results/pregnant/exploratory_diagrams_preg/sa_d_c19_vacc_week_preg.csv", row.names = FALSE)
+write.csv(d_flu_vacc_week_preg, "results/pregnant/exploratory_diagrams_preg/sa_d_flu_vacc_week_preg.csv", row.names = FALSE)
+```
+
+
+### Venn Diagrams of vaccination
+
+Crosstabs of people who were vaccinated for both flu and covid, only one, or neither.
+
+Proportional venn/euler diagrams showing the crosstabs above.
+
+Percentages are rounded to the nearest 0.1 and counts are rounded to nearest 10
+
+CSVs of crosstabs used:
+
+- t_ea_flu_c19.csv
+- t_ea_flu_c19_preg.csv
+
+
+#### Main cohort
+
+```{r, fig.width = 10, fig.height = 10}
+
+t_ea_flu_c19 <- 
+t_ea_flu_c19_raw %>%
+    mutate(
+        n = round(n, -1),
+        p = round(p, 1)
+    )
+
+write.csv(t_ea_flu_c19, "results/main_analysis/exploratory_diagrams/t_ea_flu_c19.csv", row.names = FALSE)
+
+t_ea_flu_c19 %>%
+  mutate(
+    vaccines = case_when(
+                flu_vacc_complete_flg == 1 & c19_vacc_complete_flg == 1 ~ "Both",
+                flu_vacc_complete_flg == 0 & c19_vacc_complete_flg == 1 ~ "COVID only",
+                flu_vacc_complete_flg == 1 & c19_vacc_complete_flg == 0 ~ "Flu only",
+                flu_vacc_complete_flg == 0 & c19_vacc_complete_flg == 0 ~ "Neither"
+                ),
+    np = str_glue("{n} ({p}%)",
+                n = format(n, nsmall = 0, big.mark = ","),
+                p = format(p, nsmall = 1, trim = TRUE)
+                )
+  ) %>%
+  select(
+    vaccines,
+    n = np
+  ) %>%
+    kable(
+    format.args = list(big.mark = ","),
+    align = c("l", "r", "r")
+  ) %>%
+  kable_pretty()
+
+
+print(p_ea_flu_c19_euler)
+```
+
+#### Pregnant cohort
+N.B. there is no sensitivity analysis for this
+```{r, fig.width = 10, fig.height = 10}
+
+t_ea_flu_c19_preg <- 
+t_ea_flu_c19_raw_preg %>%
+    mutate(
+        n = round(n, -1),
+        p = round(p, 1)
+    )
+
+write.csv(t_ea_flu_c19_preg, "results/pregnant/exploratory_diagrams_preg/t_ea_flu_c19_preg.csv", row.names = FALSE)
+
+
+t_ea_flu_c19_preg %>%
+  mutate(
+    vaccines = case_when(
+                flu_vacc_complete_flg == 1 & c19_vacc_complete_flg == 1 ~ "Both",
+                flu_vacc_complete_flg == 0 & c19_vacc_complete_flg == 1 ~ "COVID only",
+                flu_vacc_complete_flg == 1 & c19_vacc_complete_flg == 0 ~ "Flu only",
+                flu_vacc_complete_flg == 0 & c19_vacc_complete_flg == 0 ~ "Neither"
+                ),
+    np = str_glue("{n} ({p}%)",
+                n = format(n, nsmall = 0, big.mark = ","),
+                p = format(p, nsmall = 1, trim = TRUE)
+                )
+  ) %>%
+  select(
+    vaccines,
+    n = np
+  ) %>%
+    kable(
+    format.args = list(big.mark = ","),
+    align = c("l", "r", "r")
+  ) %>%
+  kable_pretty()
+
+print(p_ea_flu_c19_euler_preg)
+
+```
+
+## Results
+
+#### Table: Ns per group, and number and percentage completion for each vaccine
+
+- Columns:
+    + `xvar` is the covariate
+    + `xlbl` is the covariate level
+    + `xlbl_cd` is a simplified version of covariate level
+    + `wimd_q` is the cohort's wimd quintile. 0 represents the total cohort
+    + `n` is number of people per covariate level
+    + `percent` is percentage of people that are in that level out of the whole covariate
+    + `n_c19_complete` is number of people who have had all 3 covid vaccines
+    + `perc_c19_complete` is percentage of people per covariate level who have had all 3 covid vaccines
+    + `n_flu_complete` is number of people who have had both seasonal flu vaccines
+    + `perc_flu_complete` is percentage of people per covariate level who have had both flu vaccines
+- Suppression:
+    + n's between 1 and 9 are replaced with 10, counts otherwise rounded to nearest 10
+    + Column percentages to 1 decimal place unless respective n is <10. In which case percentages are removed
+    
+N.B. There was low coverage for BMI recordings, so we imputed missing values.
+
+corrosponding csvs:
+
+- imputed_overall_descriptive.csv
+- overall_descriptive_preg_imputed.csv
+
+Sensitivity Analysis:
+
+- sa_overall_descriptive_preg_imputed.csv
+
+Descriptive stats for sensitivity analysis are largely in the same format as initial analysis. Both cohorts which are eligible for covid or flu vaccination are shown in separate rows denoted by the column "vacc" (c19 shows a cohort eligible for covid vaccination, flu shows a cohort eligible for flu vaccination). Despite the cohort not necessarily being eligible for both vaccinations, both vaccination uptakes are shown in the table (although non-corrosponding vaccination uptakes will not be published).
+
+Below table only shows descriptive stats for main cohort
+
+```{r, fig.width = 10, fig.height = 10}
+read.csv("results/main_analysis/export_descriptive/imputed_overall_descriptive.csv") %>%
+  kable(
+    format.args = list(big.mark = ","),
+    align = c("l", "r", "r")
+  ) %>%
+  kable_pretty()
+```
+
+
+#### Figure: Odds ratios with 95% confidence intervals for overall completion of flu and covid vaccines
+
+- No suppression applied
+- Image NOT saved as a separate file
+
+```{r, fig.width = 10, fig.height = 10}
+
+qload("results/coef.qsm")
+
+p_coef_overall
+
+
+```
+
+#### Table: Odds ratios for vaccine completion dose
+
+- Tabular version of above Figure
+- Extra columns:
+    + `vacc` is vaccine type (covid vs flu)
+    + `model_type` is whether the model is adjusted (adj), unadjusted (unadj) N.B. referance factor levels not included
+    + `est` is estimate (or coefficiant)
+    + `or` is odds ratio (exponentiated)
+    + `or_low` and `or_high` are the lower and upper 95% confidence odds ratio limits respectively
+    + `se` is standard error
+    + `stat` is wald statistic
+    + `p`is p value
+- Suppression:
+    + Odds ratios are presented to 3 decimal places
+    + Standard error and p values to 4 decimal places
+    + Wald stats are to 2 decimal places
+    + All stats are removed for rows representing groups <10
+
+corrosponds to:
+
+- overall_coefs.csv
+
+
+```{r, fig.width = 10, fig.height = 10}
+read.csv("results/main_analysis/export_coefs/overall_coefs.csv") %>%
+  kable(
+    format.args = list(big.mark = ","),
+    align = c("l", "r", "r")
+  ) %>%
+  kable_pretty()
+```
+
+#### Figure: Odds ratios with 95% confidence intervals for overall completion of flu and covid vaccines in pregnant women
+
+corrosponds to:
+
+- overall_coefs_preg.csv
+
+Also for sensitivity analysis:
+
+- sa_overall_coefs_preg.csv
+
+```{r, fig.width = 10, fig.height = 10}
+
+qload("results/coef_pregnant.qsm")
+p_coef_overall
+
+```
+
+#### Interaction model ORs and 95% CIs for both cohorts:
+
+CSVs representing these interaction ORs are as follows in the same format as previous OR CSVs:
+
+- interaction_coefs.csv
+- interaction_coefs_preg.csv
+
+Sensitivity Analysis:
+
+- sa_interaction_coefs_preg.csv
+
+#### Figure: Interaction model plot for main cohort:
+
+Corrosponds to:
+
+- interaction_coefs.csv
+
+```{r, fig.width = 10, fig.height = 10}
+
+qload("results/interactions.qsm")
+
+print(p_interaction)
+
+```
+
+
+#### Table: Model stats summary
+
+- Statistcal summaries of the overall (and wimd 1st quintile as an example) adjusted log reg models
+- Only `nobs` is a count
+- All stats have been rounded to nearest 10
+- Stats of pregnancy cohort model for 1st WIMD quintile has been added
+
+```{r}
+qload("results/coef_pregnant.qsm")
+t_model_stats_preg <- t_model_stats
+qload("results/coef.qsm")
+
+rbind(
+t_model_stats %>%
+    mutate(preg = "Main analysis"),
+t_model_stats_preg %>%
+    mutate(preg = "Pregnant")
+) %>%
+mutate(
+    log_likelihood = round(log_likelihood, -1),
+    AIC = round(AIC, -1),
+    BIC = round(BIC, -1),
+    nobs = round(nobs, -1)
+) %>%
+kable(
+    align  = c("l", "r", "r", "r", "r", "r"),
+    digits = c( 0 ,  1 ,  1 ,  1 ,  1 ,  3 ),
+    format.args = list(big.mark = ",")
+) %>%
+kable_styling(
+    bootstrap_options = "striped",
+    full_width = FALSE
+)
+
+```
+```{r}
+beep()
+```
+

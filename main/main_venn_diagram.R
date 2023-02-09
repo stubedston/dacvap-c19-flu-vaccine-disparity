@@ -15,22 +15,39 @@ if (Sys.info()["user"] == "william.midgley") {
 
 rm(list = ls())
 
-library(janitor)
-library(tidyverse)
-library(patchwork)
-library(grid)
-library(eulerr)
-library(lubridate)
-library(scales)
+invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE))
+
+# ==========================================================================
+# Load
+# ==========================================================================
+
+pkgs <- c(
+  "tidyverse",
+  "beepr",
+  "patchwork",
+  "grid",
+  "eulerr",
+  "readr",
+  "scales",
+  "stringr"
+  )
+
+for (pkg in pkgs) {
+  suppressWarnings(
+    suppressPackageStartupMessages(
+      library(pkg, character.only = TRUE)
+      )
+    )
+}
 
 # ==========================================================================
 # Load data
 # ==========================================================================
 
 # England
-t_venn_england <- read.csv("d-venn/vacc_venn_diag_cohort.csv")
+t_venn_england <- read.csv("data_venn_diagram/england/___.csv")
 # Wales
-t_venn_wales_main <- read.csv("d-venn/t_ea_flu_c19.csv") %>% select(-p)
+t_venn_wales_main <- read.csv("data_venn_diagram/wales/t_ea_flu_c19.csv") %>% select(-p)
 t_venn_wales_preg <- read.csv("d-venn/t_ea_flu_c19_preg.csv") %>% select(-p)
 
 # I exported the wrong data, so I'm getting it from the report that was approved also :P

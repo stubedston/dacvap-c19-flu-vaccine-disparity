@@ -1,0 +1,48 @@
+"xvar","xlbl","xlbl_cd","wimd_q","n","percent","n_c19_complete","perc_c19_complete","n_flu_complete","perc_flu_complete"
+"total",NA,NA,0,22130,100,8790,39.7,9750,44.1
+"total",NA,NA,1,5900,26.7,1840,31.1,2270,38.5
+"total",NA,NA,2,4820,21.8,1780,36.9,2050,42.5
+"total",NA,NA,3,4100,18.5,1710,41.8,1880,46
+"total",NA,NA,4,3790,17.1,1700,45,1820,48.1
+"total",NA,NA,5,3520,15.9,1760,50,1720,49
+"wimd2019_quintile","5th (Least deprived)","5",0,3520,15.9,1760,50,1720,49
+"wimd2019_quintile","1st (Most deprived)","1",0,5900,26.7,1840,31.1,2270,38.5
+"wimd2019_quintile","2nd","2",0,4820,21.8,1780,36.9,2050,42.5
+"wimd2019_quintile","3rd","3",0,4100,18.5,1710,41.8,1880,46
+"wimd2019_quintile","4th","4",0,3790,17.1,1700,45,1820,48.1
+"age_cat","40-49","40-49",0,510,2.3,220,42.8,230,44.8
+"age_cat","18-24","18-24",0,4690,21.2,1430,30.6,1880,40.1
+"age_cat","25-29","25-29",0,7060,31.9,2650,37.6,3090,43.8
+"age_cat","30-34","30-34",0,6900,31.2,3100,44.9,3180,46.1
+"age_cat","35-39","35-39",0,2970,13.4,1390,46.7,1380,46.3
+"ethn_cat","White","w",0,20630,93.2,8230,39.9,9170,44.4
+"ethn_cat","Asian","a",0,710,3.2,300,42.4,300,41.5
+"ethn_cat","Black","b",0,180,0.8,50,28.1,70,35.7
+"ethn_cat","Mixed","m",0,260,1.2,80,31.9,90,36.2
+"ethn_cat","Other","o",0,260,1.2,100,39.2,100,39.2
+"ethn_cat","(Missing)",NA,0,80,0.4,20,24.7,20,28.4
+"bmi_cat","18.5-24.9","18.5-24.9",0,8350,37.7,3350,40.1,3610,43.3
+"bmi_cat","<18.5","<18.5",0,730,3.3,220,30.7,230,32.2
+"bmi_cat","25-29.9","25-29.9",0,6550,29.6,2650,40.5,2920,44.6
+"bmi_cat","30-39.9","30-39.9",0,5510,24.9,2230,40.5,2480,45
+"bmi_cat","40+","40+",0,1000,4.5,340,34,510,50.5
+"hh_cat","2 members","2",0,4900,22.1,2100,42.9,2380,48.6
+"hh_cat","Alone","1",0,1590,7.2,660,41.5,760,47.7
+"hh_cat","3 members","3",0,6520,29.5,2700,41.4,2970,45.5
+"hh_cat","4 members","4",0,4270,19.3,1620,38,1790,42
+"hh_cat","5 members","5",0,2360,10.7,860,36.4,960,40.7
+"hh_cat","6-10 members","6-10",0,2360,10.7,800,34.1,850,36.2
+"hh_cat","11+ members","11+",0,130,0.6,40,29.5,40,28.8
+"urban_rural_class","Urban","u",0,16350,73.9,6390,39.1,7060,43.2
+"urban_rural_class","Rural","r",0,5780,26.1,2400,41.5,2690,46.5
+"num_clinical_conditions_cat","No conditions","0",0,16690,75.4,6980,41.8,7030,42.1
+"num_clinical_conditions_cat","1 condition","1",0,5330,24.1,1760,33.1,2660,50
+"num_clinical_conditions_cat","2 conditions","2",0,110,0.5,40,40.7,60,52.8
+"num_clinical_conditions_cat","3 conditions","3",0,10,NA,10,NA,10,NA
+"health_board","Aneurin Bevan University Health Board","ab",0,4270,19.3,1710,40,1880,44.1
+"health_board","Betsi Cadwaladr University Health Board","bc",0,4390,19.8,1710,39,1950,44.4
+"health_board","Cardiff and Vale University Health Board","cv",0,3670,16.6,1680,45.7,1680,45.8
+"health_board","Cwm Taf Morgannwg University Health Board","ct",0,3930,17.7,1490,38,1720,43.7
+"health_board","Hywel Dda University Health Board","hd",0,2420,10.9,940,38.9,1020,42.3
+"health_board","Powys Teaching Health Board","pt",0,440,2,190,42.8,230,53.5
+"health_board","Swansea Bay University Health Board","sb",0,3030,13.7,1080,35.6,1270,41.9

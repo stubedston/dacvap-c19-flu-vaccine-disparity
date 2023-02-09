@@ -1,0 +1,22 @@
+Venn diagram numbers,,
+main cohort,,
+c19 vaccineflu vaccine,,n
+TRUE,TRUE,"1,577,504"
+TRUE,FALSE,"931,041"
+FALSE,TRUE,"36,642"
+FALSE,FALSE,"426,793"
+,,
+Venn diagram numbers,,
+Preg cohort flu only,,
+TRUE,TRUE,"23,014"
+TRUE,FALSE,"23,912"
+FALSE,TRUE,"36,151"
+FALSE,FALSE,"63,905"
+,,
+Venn diagram numbers,,
+Preg cohort c19 only,,
+C19 vaccine,Flu vaccine,n
+TRUE,TRUE,22152
+TRUE,FALSE,22598
+FALSE,TRUE,17077
+FALSE,FALSE,49182

@@ -5,7 +5,7 @@ cat("Clear and load!\n")
 
 if (Sys.info()["user"] == "william.midgley") {
   cat("Hi Will!\n")
-  setwd("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity/main")
+  setwd("~/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity/main")
 } else if (Sys.info()["user"] == "Stuart.Bedston") {
   cat("Hi Stu!\n")
   setwd("~/Projects/dacvap-c19-flu-vaccine-disparity/main")
@@ -178,27 +178,6 @@ write_csv(
   file = "data_venn_diagram/pool_main_crosstabs.csv"
 )
 
-# main chort
-e_main <- euler(d_venn_pooled)
-
-p_euler <- plot(
-  e_main,
-  quantities = list(type = c("counts", "percent")),
-  fill = "transparent",
-  lty = c(1, 1, 2),
-  labels = c("COVID-19", "Influenza", "Neither")
-)
-
-p_euler_title <-
-  wrap_elements(p_euler) +
-  plot_annotation(
-    title = "(a) Main cohort uptake",
-    theme = theme(title = element_text(size = 10))
-  )
-
-
-print(p_euler)
-
 # ==========================================================================
 # Plot the venn diagram
 # ==========================================================================
@@ -206,37 +185,22 @@ cat("Time to start plotting!\n")
 
 # Main cohort
 
-euler(d_venn_pooled_main) %>%
-plot(counts = TRUE, labels = c("COVID", "", "Neither"), main = "Main cohort vaccine uptake") # same process for pregnant cohort
+euler(d_venn_pooled) %>%
+plot(counts = TRUE, labels = c("COVID", "", "Neither"), main = "Relative vaccine uptake")
 grid.text(expression(bold("Flu")), x=0.51, y=0.47) # flu label
-grid.text(paste0(t_venn_pooled_main$p[2], "%"), x=0.096, y=0.427) # covid only %         # These are changed to fit in the right place
-grid.text(paste0(t_venn_pooled_main$p[1], "%"), x=0.515, y=0.448) # flu & covid %
-grid.text(paste0(t_venn_pooled_main$p[3], "%"), x=0.738, y=0.46) # flu only %
-grid.text(paste0(t_venn_pooled_main$p[4], "%"), x=0.855, y=0.23) # neither %
-p_venn_pooled_main <- recordPlot()
+grid.text(paste0(t_venn_pooled$p[2], "%"), x=0.096, y=0.427) # covid only %         # These are changed to fit in the right place
+grid.text(paste0(t_venn_pooled$p[1], "%"), x=0.515, y=0.448) # flu & covid %
+grid.text(paste0(t_venn_pooled$p[3], "%"), x=0.738, y=0.46) # flu only %
+grid.text(paste0(t_venn_pooled$p[4], "%"), x=0.855, y=0.23) # neither %
+p_venn_pooled <- recordPlot()
 
-print(p_venn_pooled_main)
-
-# Pregnant cohort
-
-euler(d_venn_pooled_preg) %>% plot(counts = TRUE, labels = c("COVID", "Flu", "Neither"), main = "Pregnant cohort vaccine uptake")
-grid.text(paste0(t_venn_pooled_preg$p[2], "%"), x=0.085, y=0.46) # covid only %
-grid.text(paste0(t_venn_pooled_preg$p[1], "%"), x=0.26, y=0.465) # flu & covid %
-grid.text(paste0(t_venn_pooled_preg$p[3], "%"), x=0.47, y=0.46) # flu only %
-grid.text(paste0(t_venn_pooled_preg$p[4], "%"), x=0.785, y=0.453) # neither %
-p_venn_pooled_preg <- recordPlot()
-
-print(p_venn_pooled_preg)
+print(p_venn_pooled)
 
 # ==========================================================================
 # Save plots
 # ==========================================================================
-cat("saving...\n")
+cat("Saving...\n")
 
-png("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/Plots/p_venn_pooled_main.png", width = 600, height = 600)
-p_venn_pooled_main
-dev.off()
-
-png("C:/Users/william.midgley/Documents/dcp02_covid_v_flu_coverage_disparities/Results/Plots/p_venn_pooled_preg.png", width = 600, height = 600)
-p_venn_pooled_preg
+png("plots/pool_main_venn.png", width = 600, height = 600)
+p_venn_pooled
 dev.off()

@@ -1,12 +1,4 @@
 Venn diagram numbers,,
-main cohort,,
-c19 vaccineflu vaccine,,n
-TRUE,TRUE,"1,577,504"
-TRUE,FALSE,"931,041"
-FALSE,TRUE,"36,642"
-FALSE,FALSE,"426,793"
-,,
-Venn diagram numbers,,
 Preg cohort flu only,,
 TRUE,TRUE,"23,014"
 TRUE,FALSE,"23,912"

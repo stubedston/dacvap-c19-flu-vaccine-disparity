@@ -194,6 +194,6 @@ ggsave(
   plot     = p_pool_or,
   filename = "pool_preg_coefs.png",
   path     = "plots",
-  width    = 7.5,
-  height   = 5
+  width    = 10,
+  height   = 10
 )

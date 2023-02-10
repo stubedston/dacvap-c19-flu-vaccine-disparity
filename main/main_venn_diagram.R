@@ -94,7 +94,7 @@ full_join(t_venn_england, t_venn_wales) %>% mutate(
 t_venn_pooled$p <- round(t_venn_pooled$n/sum(t_venn_pooled$n) * 100,1)
 
 # ==========================================================================
-# Turn tables into a df 
+# Turn tables into a df
 # ==========================================================================
 
 # Main cohort
@@ -143,19 +143,26 @@ p_bar <-
 p_bar
 
 # ==========================================================================
-# Make a crosstab
+# Make a pretty crosstab
 # ==========================================================================
 
-t_vacc_status <-
-  t_venn_pooled %>% 
+crosstab <- function(data) {
+  ct <- data
+
+  if (is.null(ct$p)) {
+    colnames(ct) <- c("c19_complete", "flu_complete", "n")
+    ct$p <- round(ct$n/sum(ct$n) * 100,1)
+  }
+
+  ct <- ct %>% 
   mutate(
     vacc_cat = case_when(
       c19_complete == 1 & flu_complete == 1 ~ "Both",
-      c19_complete == 1 & flu_complete == 0 ~ "C19_only",
-      c19_complete == 0 & flu_complete == 1 ~ "Flu_only",
+      c19_complete == 1 & flu_complete == 0 ~ "COVID-19 only",
+      c19_complete == 0 & flu_complete == 1 ~ "Influenza only",
       c19_complete == 0 & flu_complete == 0 ~ "Neither"
     ),
-    vacc_cat = factor(vacc_cat, c("Neither", "C19_only", "Flu_only", "Both"))
+    vacc_cat = factor(vacc_cat, c("Neither", "COVID-19 only", "Influenza only", "Both"))
   ) %>% 
   mutate(
     n = round_half_up(n, -1),
@@ -166,17 +173,16 @@ t_vacc_status <-
   select(
     vacc_cat,
     np
-  ) %>% 
-  pivot_wider(
-    names_from = vacc_cat,
-    values_from = np,
-    names_sort = TRUE
   )
+  colnames(ct) <- c("Vaccine", str_replace(paste0(deparse(substitute(data))), "t_venn_(.+)", "\\1") %>% str_to_title())
+  return(ct)
+}
 
-write_csv(
-  t_vacc_status,
-  file = "data_venn_diagram/pool_main_crosstabs.csv"
-)
+pool_crosstabs <- cbind(
+  crosstab(t_venn_pooled),
+  crosstab(t_venn_england)["England"],
+  crosstab(t_venn_wales)["Wales"]
+  )
 
 # ==========================================================================
 # Plot the venn diagram
@@ -197,10 +203,15 @@ p_venn_pooled <- recordPlot()
 print(p_venn_pooled)
 
 # ==========================================================================
-# Save plots
+# Save
 # ==========================================================================
 cat("Saving...\n")
 
 png("plots/pool_main_venn.png", width = 600, height = 600)
 p_venn_pooled
 dev.off()
+
+write_csv(
+  pool_crosstabs,
+  file = "data_venn_diagram/pool_main_crosstabs.csv"
+)

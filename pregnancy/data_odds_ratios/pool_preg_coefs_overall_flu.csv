@@ -1,0 +1,43 @@
+Variable,Category,Adjusted OR (95% CI),Adjusted p-value,Unadjusted OR (95% CI),Undjusted p-value
+IMD (2019) quintile,1st (Most deprived),0.644 (0.598-0.693),<0.0001,0.582 (0.543-0.625),<0.0001
+IMD (2019) quintile,2nd,0.76 (0.705-0.82),<0.0001,0.71 (0.66-0.763),<0.0001
+IMD (2019) quintile,3rd,0.873 (0.808-0.943),6e-04,0.832 (0.772-0.896),<0.0001
+IMD (2019) quintile,4th,0.957 (0.885-1.036),0.2797,0.935 (0.866-1.009),0.0847
+IMD (2019) quintile,5th (Least deprived),1,0,1,0
+BMI,<18.5,0.699 (0.613-0.796),<0.0001,0.657 (0.578-0.747),<0.0001
+BMI,18.5-24.9,1,0,1,0
+BMI,25-29.9,1.034 (0.979-1.092),0.2264,1.021 (0.968-1.078),0.4423
+BMI,30-39.9,1.074 (1.013-1.138),0.0162,1.034 (0.977-1.094),0.2537
+BMI,40+,1.152 (1.021-1.299),0.0214,1.079 (0.958-1.214),0.2114
+Ethnicity,White,1,0,1,0
+Ethnicity,Asian,1.194 (1.05-1.358),0.0068,0.984 (0.87-1.112),0.7909
+Ethnicity,Black,0.932 (0.732-1.188),0.5707,0.797 (0.628-1.01),0.0609
+Ethnicity,Mixed,0.656 (0.531-0.811),1e-04,0.661 (0.537-0.814),1e-04
+Ethnicity,Other,0.942 (0.775-1.146),0.5495,0.831 (0.687-1.007),0.0585
+Ethnicity,(Missing),0.624 (0.427-0.913),0.0152,0.545 (0.375-0.793),0.0015
+Household composition,Alone,0.95 (0.866-1.043),0.2839,0.943 (0.859-1.034),0.2089
+Household composition,2 members,1,0,1,0
+Household composition,3 members,0.871 (0.819-0.927),<0.0001,0.884 (0.832-0.941),1e-04
+Household composition,4 members,0.745 (0.695-0.799),<0.0001,0.736 (0.687-0.788),<0.0001
+Household composition,5 members,0.72 (0.662-0.783),<0.0001,0.696 (0.641-0.756),<0.0001
+Household composition,6-10 members,0.576 (0.528-0.628),<0.0001,0.555 (0.51-0.604),<0.0001
+Household composition,11+ members,0.373 (0.272-0.511),<0.0001,0.362 (0.265-0.494),<0.0001
+No. of clinical conditions,No conditions,1,0,1,0
+No. of clinical conditions,1 condition,1.073 (1.013-1.136),0.0155,1.066 (1.008-1.128),0.0246
+No. of clinical conditions,2 conditions,1.237 (0.875-1.748),0.2296,1.187 (0.843-1.672),0.3269
+No. of clinical conditions,3 conditions,1,0,1,0
+Urban/rural class,Urban,1,0,1,0
+Urban/rural class,Rural,1.111 (1.05-1.176),3e-04,1.153 (1.097-1.213),<0.0001
+Age,18-24,0.915 (0.784-1.067),0.2578,0.8 (0.688-0.931),0.0039
+Age,25-29,0.954 (0.821-1.109),0.5404,0.94 (0.81-1.09),0.41
+Age,30-34,1.079 (0.928-1.254),0.322,1.098 (0.947-1.274),0.2164
+Age,35-39,1.085 (0.928-1.269),0.3074,1.1 (0.943-1.284),0.2262
+Age,40-49,1,0,1,0
+Health board,Aneurin Bevan University Health Board,1,0,1,0
+Health board,Betsi Cadwaladr University Health Board,0.93 (0.864-1.002),0.0559,1.043 (0.972-1.119),0.2415
+Health board,Cardiff and Vale University Health Board,1.059 (0.98-1.143),0.1451,1.11 (1.031-1.195),0.0055
+Health board,Cwm Taf Morgannwg University Health Board,0.929 (0.863-1),0.0505,0.963 (0.896-1.036),0.3097
+Health board,Hywel Dda University Health Board,0.84 (0.769-0.917),1e-04,0.955 (0.878-1.038),0.2793
+Health board,Powys Teaching Health Board,1.136 (0.958-1.348),0.1427,1.338 (1.133-1.58),6e-04
+Health board,Swansea Bay University Health Board,0.901 (0.832-0.975),0.0097,0.939 (0.869-1.015),0.1142
+NA,NA,1,0,1,0

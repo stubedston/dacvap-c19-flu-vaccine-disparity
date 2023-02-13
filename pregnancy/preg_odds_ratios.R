@@ -86,9 +86,22 @@ d_pool_or <- bind_rows(d_pool_or, d_refs)
 # lkps
 # ==========================================================================
 
+lkp_xvar_table <- c(
+    "IMD (2019) quintile"            = "wimd2019_quintile",
+    "Age"                            = "age_cat",
+    "Sex"                            = "gndr_cd",
+    "Ethnicity"                      = "ethn_cat",
+    "BMI"                            = "bmi_cat",
+    "Household composition"          = "hh_cat",
+    "Urban/rural class"              = "urban_rural_class",
+    "No. of clinical conditions"     = "num_clinical_conditions_cat",
+    "Health board"                   = "health_board"
+)
+
 lkp_xvar <- c(
     "IMD (2019)\nquintile"          = "wimd2019_quintile",
     "Age"                            = "age_cat",
+    "Sex"                            = "gndr_cd",
     "Ethnicity"                      = "ethn_cat",
     "BMI"                            = "bmi_cat",
     "Household\ncomposition"         = "hh_cat",
@@ -96,6 +109,7 @@ lkp_xvar <- c(
     "No. of clinical\nconditions"    = "num_clinical_conditions_cat",
     "Health board"                   = "health_board"
 )
+
 
 lkp_model_type <- c(
     "Adjusted"   = "adj",
@@ -107,6 +121,117 @@ lkp_vacc <- c(
     "COVID-19"  = "c19",
     "Influenza" = "flu"
 )
+
+
+# ==========================================================================
+# Make pretty table
+# ==========================================================================
+
+d_pool_or_pretty <-
+d_pool_or %>% 
+    mutate(
+    xlbl = xlbl %>% fct_relevel( # orders based numerically or by population
+        # wimd
+        "1st (Most deprived)",
+        "2nd",
+        "3rd",
+        "4th",
+        "5th (Least deprived)",
+        # sex
+        "Female",
+        "Male",
+        # age
+        "18-50",
+        "50-65",
+        "65-80",
+        "80+",
+        # BMI
+        "<18.5",
+        "18.5-24.9",
+        "25-29.9",
+        "30-39.9",
+        "40+",
+        # ethnicity
+        "White",
+        "Asian",
+        "Black",
+        "Mixed",
+        "Other",
+        "(Missing)",
+        # house hold
+        "Alone",
+        "2 members",
+        "3 members",
+        "4 members",
+        "5 members",
+        "6-10 members",
+        "11+ members",
+        # clin conditions
+        "No conditions",
+        "1 condition",
+        "2 conditions",
+        "3 conditions",
+        "4+ conditions",
+        # Rurality
+        "Urban",
+        "Rural"
+        )
+    ) %>%
+    select(
+        xvar,
+        xlbl,
+        vacc,
+        model_type,
+        or,
+        or_low,
+        or_high,
+        p
+    ) %>%
+    arrange(xlbl) %>%
+    filter(xvar != "total flu eligable")
+
+d_pool_or_pretty <-
+    d_pool_or_pretty %>% mutate(
+        xvar = factor(xvar, lkp_xvar, names(lkp_xvar_table)),
+        `OR (95% CI)` = case_when(
+            model_type == "ref" ~ "1",
+            TRUE ~ paste0(or, " (", or_low, "-", or_high, ")")
+            ),
+        p = case_when(
+            model_type == "ref" ~ "0",
+            p < 0.0001 ~ "<0.0001",
+            TRUE ~ paste0(p))
+        ) %>%
+    select(
+        xvar,
+        xlbl,
+        vacc,
+        model_type,
+        `OR (95% CI)`,
+        p
+        )
+
+d_pool_or_pretty_adj <-
+    d_pool_or_pretty %>%
+        filter(model_type != "unadj") %>%
+        select(-model_type)
+colnames(d_pool_or_pretty_adj) <- c("Variable", "Category", "vacc", "Adjusted OR (95% CI)", "Adjusted p-value")
+
+d_pool_or_pretty_unadj <-
+    d_pool_or_pretty %>%
+        filter(model_type != "adj") %>%
+        select(-model_type)
+colnames(d_pool_or_pretty_unadj) <- c("Variable", "Category", "vacc", "Unadjusted OR (95% CI)", "Undjusted p-value")
+
+d_pool_or_pretty <-
+    full_join(
+        d_pool_or_pretty_adj,
+        d_pool_or_pretty_unadj,
+        by = c("Variable", "Category", "vacc")
+    )
+
+d_pool_or_pretty_c19 <- d_pool_or_pretty %>% filter(vacc == "c19") %>% select(-vacc) %>% distinct()
+d_pool_or_pretty_flu <- d_pool_or_pretty %>% filter(vacc == "flu") %>% select(-vacc) %>% distinct()
 
 
 # ==========================================================================
@@ -189,6 +314,17 @@ p_pool_or
 # Save plot
 # ==========================================================================
 cat("Saving...\n")
+
+write_csv(
+  d_pool_or_pretty_c19,
+  file = "data_odds_ratios/pool_preg_coefs_overall_c19.csv"
+  )
+
+write_csv(
+  d_pool_or_pretty_flu,
+  file = "data_odds_ratios/pool_preg_coefs_overall_flu.csv"
+  )
+
 
 ggsave(
   plot     = p_pool_or,

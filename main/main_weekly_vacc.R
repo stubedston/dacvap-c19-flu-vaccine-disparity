@@ -107,7 +107,7 @@ process.wales <- function(data) {
   		vacc_type == "flu" ~ paste0("20",vacc_seq),
   		vacc_type == "c19" ~ paste(vacc_seq)
   		),
-  	vacc_date = ymd(vacc_date),
+  	vacc_date = as.Date(vacc_date),
     n_wales = n
   	) %>%
     select(-n)
@@ -127,12 +127,49 @@ pool.data <- function(england, wales) {
 		n_wales = replace_na(n_wales, 0),
 		n_england = replace_na(n_england, 0),
 		n = n_wales + n_england
-	) %>%
-	select(-n_england)
+	)
 }
 
 d_weekly_pooled_c19 <- pool.data(d_weekly_england_c19, d_weekly_wales_c19)
 d_weekly_pooled_flu <- pool.data(d_weekly_england_flu, d_weekly_wales_flu)
+
+# ==========================================================================
+# Make a pretty table
+# ==========================================================================
+
+d_weekly_pooled_pretty_c19 <- d_weekly_pooled_c19 %>%
+  mutate(
+    `Vaccination date` = vacc_date,
+    `COVID-19 Dose` = str_replace(vacc_seq, "dose", ""),
+    `Pooled n (COVID-19)` = n,
+    `England n (COVID-19)` = n_england,
+    `Wales n (COVID-19)` = n_wales
+    ) %>%
+  select(
+    `Vaccination date`,
+    `COVID-19 Dose`,
+    `Pooled n (COVID-19)`,
+    `England n (COVID-19)`,
+    `Wales n (COVID-19)`
+    )
+
+d_weekly_pooled_pretty_flu <- d_weekly_pooled_flu %>%
+  mutate(
+    `Vaccination date` = vacc_date,
+    `Influenza season` = vacc_seq,
+    `Pooled n (flu)` = n,
+    `England n (flu)` = n_england,
+    `Wales n (flu)` = n_wales
+    ) %>%
+  select(
+    `Vaccination date`,
+    `Influenza season`,
+    `Pooled n (flu)`,
+    `England n (flu)`,
+    `Wales n (flu)`
+    )
+
+d_weekly_pooled_pretty <- full_join(d_weekly_pooled_pretty_c19, d_weekly_pooled_pretty_flu, by = "Vaccination date")
 
 # ==========================================================================
 # Plotting graphs
@@ -249,6 +286,11 @@ p_weekly_pooled
 # Save plots
 # ==========================================================================
 cat("saving...\n")
+
+write_csv(
+  d_weekly_pooled_pretty,
+  file = "data_weekly_vacc/pool_main_weekly_vacc.csv"
+  )
 
 ggsave(
   plot     = p_weekly_pooled,

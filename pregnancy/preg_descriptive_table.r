@@ -57,8 +57,6 @@ for (pkg in pkgs) {
 # Load data
 # ==========================================================================
 
-# TO BE UPDATED WITH POOLED DATA
-
 d_pool_desc_c19 <- read.csv("data_descriptive_tables/pool_preg_descriptive_c19.csv")
 d_pool_desc_flu <- read.csv("data_descriptive_tables/pool_preg_descriptive_flu.csv")
 

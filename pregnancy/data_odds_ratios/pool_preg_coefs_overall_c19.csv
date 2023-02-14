@@ -1,43 +1,35 @@
-Variable,Category,Adjusted OR (95% CI),Adjusted p-value,Unadjusted OR (95% CI),Undjusted p-value
-IMD (2019) quintile,1st (Most deprived),0.52 (0.475-0.569),<0.0001,0.45 (0.413-0.49),<0.0001
-IMD (2019) quintile,2nd,0.658 (0.6-0.721),<0.0001,0.583 (0.534-0.636),<0.0001
-IMD (2019) quintile,3rd,0.786 (0.715-0.863),<0.0001,0.721 (0.658-0.789),<0.0001
-IMD (2019) quintile,4th,0.882 (0.802-0.97),0.0098,0.817 (0.746-0.896),<0.0001
-IMD (2019) quintile,5th (Least deprived),1,0,1,0
-BMI,<18.5,0.714 (0.604-0.844),1e-04,0.66 (0.561-0.778),<0.0001
-BMI,18.5-24.9,1,0,1,0
-BMI,25-29.9,1.032 (0.965-1.104),0.3584,1.013 (0.948-1.082),0.7026
-BMI,30-39.9,1.081 (1.007-1.161),0.0325,1.015 (0.947-1.087),0.6788
-BMI,40+,0.852 (0.74-0.98),0.0254,0.767 (0.669-0.88),2e-04
-Ethnicity,White,1,0,1,0
-Ethnicity,Asian,1.111 (0.948-1.301),0.1937,1.096 (0.943-1.275),0.2308
-Ethnicity,Black,0.585 (0.421-0.812),0.0013,0.59 (0.428-0.814),0.0013
-Ethnicity,Mixed,0.65 (0.497-0.849),0.0016,0.709 (0.546-0.922),0.0102
-Ethnicity,Other,0.898 (0.696-1.159),0.409,0.944 (0.737-1.209),0.6472
-Ethnicity,(Missing),0.512 (0.307-0.855),0.0105,0.491 (0.296-0.813),0.0057
-Household composition,Alone,0.935 (0.833-1.051),0.2614,0.935 (0.834-1.048),0.2501
-Household composition,2 members,1,0,1,0
-Household composition,3 members,0.917 (0.849-0.99),0.0259,0.943 (0.875-1.016),0.1219
-Household composition,4 members,0.832 (0.763-0.906),<0.0001,0.813 (0.748-0.884),<0.0001
-Household composition,5 members,0.814 (0.734-0.903),1e-04,0.76 (0.687-0.84),<0.0001
-Household composition,6-10 members,0.746 (0.672-0.83),<0.0001,0.688 (0.622-0.762),<0.0001
-Household composition,11+ members,0.589 (0.4-0.866),0.0072,0.545 (0.374-0.795),0.0016
-No. of clinical conditions,No conditions,1,0,1,0
-No. of clinical conditions,1 condition,0.688 (0.644-0.735),<0.0001,0.691 (0.648-0.737),<0.0001
-No. of clinical conditions,2 conditions,1.018 (0.689-1.503),0.9296,0.952 (0.649-1.398),0.8023
-No. of clinical conditions,3 conditions,1,0,1,0
-Urban/rural class,Urban,1,0,1,0
-Urban/rural class,Rural,1.065 (0.993-1.142),0.0761,1.108 (1.042-1.177),0.001
-Age,18-24,0.677 (0.56-0.819),1e-04,0.589 (0.489-0.709),<0.0001
-Age,25-29,0.831 (0.691-1),0.05,0.808 (0.674-0.969),0.0212
-Age,30-34,1.069 (0.889-1.286),0.4774,1.091 (0.91-1.308),0.3443
-Age,35-39,1.14 (0.94-1.381),0.1823,1.17 (0.968-1.414),0.1036
-Age,40-49,1,0,1,0
-Health board,Aneurin Bevan University Health Board,1,0,1,0
-Health board,Betsi Cadwaladr University Health Board,0.823 (0.751-0.902),<0.0001,0.961 (0.882-1.047),0.3664
-Health board,Cardiff and Vale University Health Board,1.127 (1.026-1.238),0.0124,1.263 (1.155-1.381),<0.0001
-Health board,Cwm Taf Morgannwg University Health Board,0.887 (0.81-0.972),0.01,0.922 (0.843-1.007),0.0713
-Health board,Hywel Dda University Health Board,0.834 (0.748-0.93),0.0011,0.956 (0.864-1.059),0.3903
-Health board,Powys Teaching Health Board,0.925 (0.753-1.137),0.46,1.124 (0.921-1.371),0.2493
-Health board,Swansea Bay University Health Board,0.773 (0.701-0.853),<0.0001,0.819 (0.744-0.901),<0.0001
-NA,NA,1,0,1,0
+vacc_doseb_name,xvar,xlbl,est,ci_low,ci_high
+NA,Age,40-49,1.00,1.00,1.00
+NA,Age,18-24,0.37,0.35,0.39
+NA,Age,25-29,0.49,0.46,0.51
+NA,Age,30-34,0.68,0.65,0.72
+NA,Age,35-39,0.80,0.76,0.84
+NA,Ethnicity,White,1.00,1.00,1.00
+NA,Ethnicity,Male,0.80,0.74,0.87
+NA,Ethnicity,Asian,1.01,0.97,1.06
+NA,Ethnicity,Black,0.48,0.45,0.51
+NA,Ethnicity,Other,0.69,0.63,0.76
+NA,SES quintile,imd 5 - Least deprived,1.00,1.00,1.00
+NA,SES quintile,imd 1 - Most deprived,0.44,0.43,0.46
+NA,SES quintile,imd 2,0.60,0.58,0.63
+NA,SES quintile,imd 3,0.74,0.71,0.76
+NA,SES quintile,imd 4,0.86,0.82,0.89
+NA,BMI,18.5-24.9,1.00,1.00,1.00
+NA,BMI,<18.5,0.83,0.78,0.88
+NA,BMI,25.0-29.9,1.03,1.00,1.06
+NA,BMI,30.0-39.9,1.05,1.02,1.08
+NA,BMI,40.0+,1.00,0.94,1.07
+NA,No. QCovid comorbidities,rsk 0,1.00,1.00,1.00
+NA,No. QCovid comorbidities,rsk 1,0.82,0.80,0.84
+NA,No. QCovid comorbidities,rsk 2,0.94,0.88,1.00
+NA,No. QCovid comorbidities,rsk 3,1.16,0.98,1.36
+NA,No. QCovid comorbidities,rsk 4+,1.12,0.81,1.55
+NA,Urban/rural,Urban,1.00,1.00,1.00
+NA,Urban/rural,Rural,1.14,1.10,1.17
+NA,Number of household members,2,1.00,1.00,1.00
+NA,Number of household members,hh 1,0.78,0.76,0.80
+NA,Number of household members,hh 3,0.87,0.84,0.91
+NA,Number of household members,hh 4,0.83,0.79,0.88
+NA,Number of household members,hh 5,0.77,0.72,0.83
+NA,Number of household members,hh 6-10,0.70,0.65,0.76
+NA,Number of household members,hh 7+,0.75,0.62,0.92

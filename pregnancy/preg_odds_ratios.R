@@ -137,14 +137,12 @@ d_pool_or %>%
         "3rd",
         "4th",
         "5th (Least deprived)",
-        # sex
-        "Female",
-        "Male",
         # age
-        "18-50",
-        "50-65",
-        "65-80",
-        "80+",
+        "18-24",
+        "25-29",
+        "30-34",
+        "35-39",
+        "40-49",
         # BMI
         "<18.5",
         "18.5-24.9",
@@ -192,7 +190,7 @@ d_pool_or %>%
 
 d_pool_or_pretty <-
     d_pool_or_pretty %>% mutate(
-        xvar = factor(xvar, lkp_xvar, names(lkp_xvar_table)),
+        xvar = factor(xvar, lkp_xvar_table, names(lkp_xvar_table)),
         `OR (95% CI)` = case_when(
             model_type == "ref" ~ "1",
             TRUE ~ paste0(or, " (", or_low, "-", or_high, ")")
@@ -317,12 +315,12 @@ cat("Saving...\n")
 
 write_csv(
   d_pool_or_pretty_c19,
-  file = "data_odds_ratios/pool_preg_coefs_overall_c19.csv"
+  file = "data_odds_ratios/pool_preg_coefs_overall_c19_pretty.csv"
   )
 
 write_csv(
   d_pool_or_pretty_flu,
-  file = "data_odds_ratios/pool_preg_coefs_overall_flu.csv"
+  file = "data_odds_ratios/pool_preg_coefs_overall_flu_pretty.csv"
   )
 
 

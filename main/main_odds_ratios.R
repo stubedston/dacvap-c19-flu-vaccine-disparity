@@ -193,7 +193,7 @@ d_pool_or %>%
 
 d_pool_or_pretty <-
     d_pool_or_pretty %>% mutate(
-        xvar = factor(xvar, lkp_xvar, names(lkp_xvar_table)),
+        xvar = factor(xvar, lkp_xvar_table, names(lkp_xvar_table)),
         `OR (95% CI)` = case_when(
             model_type == "ref" ~ "1",
             TRUE ~ paste0(or, " (", or_low, "-", or_high, ")")
@@ -320,12 +320,12 @@ cat("Saving...\n")
 
 write_csv(
   d_pool_or_pretty_c19,
-  file = "data_odds_ratios/pool_main_coefs_overall_c19.csv"
+  file = "data_odds_ratios/pool_main_coefs_overall_c19_pretty.csv"
   )
 
 write_csv(
   d_pool_or_pretty_flu,
-  file = "data_odds_ratios/pool_main_coefs_overall_flu.csv"
+  file = "data_odds_ratios/pool_main_coefs_overall_flu_pretty.csv"
   )
 
 ggsave(

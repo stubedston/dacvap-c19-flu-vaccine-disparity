@@ -182,6 +182,10 @@ d_cohort_eligible <- d_cohort %>%
 d_cohort_pregnant <- d_cohort %>%
   filter(
     !is_over50,
+    # Everything was run on one of the following two criteria for the covid cohort and flu cohort respectively
+    # (pregnant_eligible is for both for the venn diagram)
+    #c19_eligible,
+    #(flu1_eligible|flu2_eligible)
     pregnant_eligible
     ) %>%
   mutate(

@@ -57,10 +57,99 @@ for (pkg in pkgs) {
 # Load data
 # ==========================================================================
 
-# TO BE UPDATED WITH POOLED DATA
+d_wales_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive.csv")
+d_wales_desc <- d_wales_desc[1:37, c(1, 2, 5, 7, 9)]
+colnames(d_wales_desc) <- c("xvar", "xlbl", "n_wales", "n_c19_complete_wales", "n_flu_complete_wales")
 
-d_pool_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive.csv")
+d_england_desc <- read.csv("data_descriptive_tables/england/england_main_descriptive.csv")
+d_england_desc <- d_england_desc[2:nrow(d_england_desc),1:5]
+colnames(d_england_desc) <- c("xvar", "xlbl", "n_c19_complete_england", "n_flu_complete_england", "n_england")
 
+# ==========================================================================
+# Process england data
+# ==========================================================================
+
+total_england <- tribble(~xvar, ~xlbl, ~n_c19_complete_england, ~n_flu_complete_england, ~n_england,
+  "total",
+  "Total",
+  d_england_desc %>%
+    filter(xvar == "IMDQuintile") %>%
+    mutate(n = as.numeric(n_c19_complete_england)) %>%
+    select(n) %>%
+    sum(),
+    d_england_desc %>%
+    filter(xvar == "IMDQuintile") %>%
+    mutate(n = as.numeric(n_flu_complete_england)) %>%
+    select(n) %>%
+    sum(),
+  d_england_desc %>%
+    filter(xvar == "IMDQuintile") %>%
+    mutate(n = as.numeric(n_england)) %>%
+    select(n) %>%
+    sum()
+    )
+
+
+d_england_desc <-
+d_england_desc %>% mutate(
+  xlbl = case_when(
+    xvar == "bmi_cat"         & xlbl == "missing" ~ "(BMI missing)",
+    xvar == "Ethnicity"       & xlbl == "missing" ~ "(Ethnicity missing)",
+    xvar == "Ethnicity"       & xlbl == "M"       ~ "Mixed",
+    xvar == "Ethnicity"       & xlbl == "W"       ~ "White",
+    xvar == "Ethnicity"       & xlbl == "A"       ~ "Asian",
+    xvar == "Ethnicity"       & xlbl == "B"       ~ "Black",
+    xvar == "Ethnicity"       & xlbl == "O"       ~ "Other",
+    xvar == "household_n_cat" & xlbl == "1"       ~ "Alone",
+    xvar == "household_n_cat" & xlbl == "2"       ~ "2 members",
+    xvar == "household_n_cat" & xlbl == "3"       ~ "3 members",
+    xvar == "household_n_cat" & xlbl == "4"       ~ "4 members",
+    xvar == "household_n_cat" & xlbl == "5"       ~ "5 members",
+    xvar == "household_n_cat" & xlbl == "06-Oct"  ~ "6-10 members",
+    xvar == "household_n_cat" & xlbl == "11+"     ~ "11+ members",
+    xvar == "IMDQuintile"     & xlbl == "1"       ~ "1st (Most deprived)",
+    xvar == "IMDQuintile"     & xlbl == "2"       ~ "2nd",
+    xvar == "IMDQuintile"     & xlbl == "3"       ~ "3rd",
+    xvar == "IMDQuintile"     & xlbl == "4"       ~ "4th",
+    xvar == "IMDQuintile"     & xlbl == "5"       ~ "5th (Least deprived)",
+    xvar == "nrg_cat"         & xlbl == "0"       ~ "No conditions",
+    xvar == "nrg_cat"         & xlbl == "1"       ~ "1 condition",
+    xvar == "nrg_cat"         & xlbl == "2"       ~ "2 conditions",
+    xvar == "nrg_cat"         & xlbl == "3"       ~ "3 conditions",
+    xvar == "nrg_cat"         & xlbl == "4"       ~ "4+ conditions",
+    xvar == "Sex"             & xlbl == "F"       ~ "Female",
+    xvar == "Sex"             & xlbl == "M"       ~ "Male",
+    TRUE                                          ~ xlbl
+    ),
+  xvar = case_when(
+    xvar == "Ethnicity"       ~ "ethn_cat",
+    xvar == "household_n_cat" ~ "hh_cat",
+    xvar == "IMDQuintile"     ~ "wimd2019_quintile",
+    xvar == "nrg_cat"         ~ "num_clinical_conditions_cat",
+    xvar == "Sex"             ~ "gndr_cd",
+    xvar == "UrbanRural"      ~ "urban_rural_class",
+    TRUE                      ~ xvar
+    )
+  ) %>% rbind(total_england)
+
+# ==========================================================================
+# Process wales data
+# ==========================================================================
+
+d_wales_desc <-
+d_wales_desc %>% mutate(
+  xlbl = case_when(
+    xvar == "age_cat" & xlbl == "18-50"   ~ "18-49",
+    xvar == "age_cat" & xlbl == "50-65"   ~ "50-64",
+    xvar == "age_cat" & xlbl == "65-80"   ~ "65-79",
+    xvar == "bmi_cat" & xlbl == "25-29.9" ~ "25.0-29.9",
+    xvar == "bmi_cat" & xlbl == "30-29.9" ~ "30.0-39.9",
+    xvar == "total"                       ~ "Total",
+    TRUE                                  ~ xlbl
+    )
+  )
+
+full_join(d_england_desc, d_wales_desc)
 
 # ==========================================================================
 # lkps
@@ -68,7 +157,7 @@ d_pool_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive.cs
 
 lkp_xvar_table <- c(
     "Total"                          = "total",
-    "IMD (2019) quintile"            = "wimd2019_quintile",
+    "IMD quintile"                   = "wimd2019_quintile",
     "Age"                            = "age_cat",
     "Sex"                            = "gndr_cd",
     "Ethnicity"                      = "ethn_cat",
@@ -86,51 +175,53 @@ lkp_model_type <- c(
     "Reference"  = "ref"
 )
 
-lkp_xlbls <- c("Total",
-            # wimd
-            "1st (Most deprived)",
-            "2nd",
-            "3rd",
-            "4th",
-            "5th (Least deprived)",
-            # sex
-            "Female",
-            "Male",
-            # age
-            "18-50",
-            "50-65",
-            "65-80",
-            "80+",
-            # BMI
-            "<18.5",
-            "18.5-24.9",
-            "25-29.9",
-            "30-39.9",
-            "40+",
-            # ethnicity
-            "White",
-            "Asian",
-            "Black",
-            "Mixed",
-            "Other",
-            "(Missing)",
-            # house hold
-            "Alone",
-            "2 members",
-            "3 members",
-            "4 members",
-            "5 members",
-            "6-10 members",
-            "11+ members",
-            # clin conditions
-            "No conditions",
-            "1 condition",
-            "2 conditions",
-            "3 conditions",
-            "4+ conditions",
-            # Rurality
-            "Urban",
-            "Rural")
+lkp_xlbls <- c(
+    "Total",
+    # wimd
+    "1st (Most deprived)",
+    "2nd",
+    "3rd",
+    "4th",
+    "5th (Least deprived)",
+    # sex
+    "Female",
+    "Male",
+    # age
+    "18-50",
+    "50-65",
+    "65-80",
+    "80+",
+    # BMI
+    "<18.5",
+    "18.5-24.9",
+    "25-29.9",
+    "30-39.9",
+    "40+",
+    # ethnicity
+    "White",
+    "Asian",
+    "Black",
+    "Mixed",
+    "Other",
+    "(Missing)",
+    # house hold
+    "Alone",
+    "2 members",
+    "3 members",
+    "4 members",
+    "5 members",
+    "6-10 members",
+    "11+ members",
+    # clin conditions
+    "No conditions",
+    "1 condition",
+    "2 conditions",
+    "3 conditions",
+    "4+ conditions",
+    # Rurality
+    "Urban",
+    "Rural")
+
 # ==========================================================================
 # Make pretty table
 # ==========================================================================

@@ -87,7 +87,7 @@ d_pool_or <- bind_rows(d_pool_or, d_refs)
 # ==========================================================================
 
 lkp_xvar_table <- c(
-    "IMD (2019) quintile"            = "wimd2019_quintile",
+    "IMD quintile"                   = "wimd2019_quintile",
     "Age"                            = "age_cat",
     "Sex"                            = "gndr_cd",
     "Ethnicity"                      = "ethn_cat",
@@ -127,6 +127,9 @@ lkp_vacc <- c(
 # Make pretty table
 # ==========================================================================
 
+# PUT UNADJUSTED FIRST
+# ONLY 2DP
+
 d_pool_or_pretty <-
 d_pool_or %>% 
     mutate(
@@ -149,13 +152,14 @@ d_pool_or %>%
         "25-29.9",
         "30-39.9",
         "40+",
+        "BMI missing",
         # ethnicity
         "White",
         "Asian",
         "Black",
         "Mixed",
         "Other",
-        "(Missing)",
+        "(Ethnicity missing)",
         # house hold
         "Alone",
         "2 members",

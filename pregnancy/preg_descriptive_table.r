@@ -117,7 +117,7 @@ d_pool_desc_flu <-
 
 lkp_xvar_table <- c(
     "Total"                          = "total",
-    "IMD (2019) quintile"            = "IMDQuintile",
+    "IMD quintile"                   = "IMDQuintile",
     "Age"                            = "age_cat",
     "Sex"                            = "gndr_cd",
     "Ethnicity"                      = "Ethnicity",
@@ -153,13 +153,14 @@ lkp_xlbls <- c("Total",
             "25-29.9",
             "30-39.9",
             "40+",
+            "(BMI missing)",
             # ethnicity
             "White",
             "Asian",
             "Black",
             "Mixed",
             "Other",
-            "(Missing)",
+            "(Ethnicity missing)",
             # house hold
             "Alone",
             "2 members",
@@ -184,11 +185,13 @@ lkp_xlbls <- c("Total",
 d_pool_desc_c19 <-
 d_pool_desc_c19 %>% 
     mutate(
-      xlbl = fct_explicit_na(xlbl, "Total"),
-      xlbl = xlbl %>%
-              fct_relevel( # orders based numerically or by population
-              lkp_xlbls
-            )
+      xlbl = paste0(xlbl),
+      xlbl = case_when(
+        xlbl == "(Missing)" ~ "(Ethnicity missing)",
+        xlbl == "missing"   ~ "(BMI missing)",
+        TRUE                ~ xlbl
+        ) %>% factor(levels = lkp_xlbls),
+      perc_c19_complete = format(as.numeric(perc_c19_complete), nsmall = 1)
     ) %>%
     select(
       xvar,
@@ -217,11 +220,13 @@ d_pool_desc_c19_pretty <-
 d_pool_desc_flu <-
 d_pool_desc_flu %>% 
     mutate(
-      xlbl = fct_explicit_na(xlbl, "Total"),
-      xlbl = xlbl %>%
-              fct_relevel( # orders based numerically or by population
-              lkp_xlbls
-            )
+      xlbl = paste0(xlbl),
+      xlbl = case_when(
+        xlbl == "(Missing)" ~ "(Ethnicity missing)",
+        xlbl == "missing"   ~ "(BMI missing)",
+        TRUE                ~ xlbl
+        ) %>% factor(levels = lkp_xlbls),
+      perc_flu_complete = format(as.numeric(perc_flu_complete), nsmall = 1)
     ) %>%
     select(
       xvar,

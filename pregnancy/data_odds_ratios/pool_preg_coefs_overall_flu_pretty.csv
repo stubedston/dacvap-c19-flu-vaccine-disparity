@@ -19,7 +19,6 @@ Ethnicity,Asian,1.194 (1.05-1.358),0.0068,0.984 (0.87-1.112),0.7909
 Ethnicity,Black,0.932 (0.732-1.188),0.5707,0.797 (0.628-1.01),0.0609
 Ethnicity,Mixed,0.656 (0.531-0.811),1e-04,0.661 (0.537-0.814),1e-04
 Ethnicity,Other,0.942 (0.775-1.146),0.5495,0.831 (0.687-1.007),0.0585
-Ethnicity,(Missing),0.624 (0.427-0.913),0.0152,0.545 (0.375-0.793),0.0015
 Household composition,Alone,0.95 (0.866-1.043),0.2839,0.943 (0.859-1.034),0.2089
 Household composition,2 members,1,0,1,0
 Household composition,3 members,0.871 (0.819-0.927),<0.0001,0.884 (0.832-0.941),1e-04
@@ -33,6 +32,7 @@ No. of clinical conditions,2 conditions,1.237 (0.875-1.748),0.2296,1.187 (0.843-
 No. of clinical conditions,3 conditions,1,0,1,0
 Urban/rural class,Urban,1,0,1,0
 Urban/rural class,Rural,1.111 (1.05-1.176),3e-04,1.153 (1.097-1.213),<0.0001
+Ethnicity,(Missing),0.624 (0.427-0.913),0.0152,0.545 (0.375-0.793),0.0015
 Health board,Aneurin Bevan University Health Board,1,0,1,0
 Health board,Betsi Cadwaladr University Health Board,0.93 (0.864-1.002),0.0559,1.043 (0.972-1.119),0.2415
 Health board,Cardiff and Vale University Health Board,1.059 (0.98-1.143),0.1451,1.11 (1.031-1.195),0.0055

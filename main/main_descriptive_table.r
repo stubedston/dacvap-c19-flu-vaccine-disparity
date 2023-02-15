@@ -89,7 +89,6 @@ total_england <- tribble(~xvar, ~xlbl, ~n_c19_complete_england, ~n_flu_complete_
     sum()
     )
 
-
 d_england_desc <-
 d_england_desc %>% mutate(
   xlbl = case_when(
@@ -116,7 +115,7 @@ d_england_desc %>% mutate(
     xvar == "nrg_cat"         & xlbl == "1"       ~ "1 condition",
     xvar == "nrg_cat"         & xlbl == "2"       ~ "2 conditions",
     xvar == "nrg_cat"         & xlbl == "3"       ~ "3 conditions",
-    xvar == "nrg_cat"         & xlbl == "4"       ~ "4+ conditions",
+    xvar == "nrg_cat"         & xlbl == "4+"       ~ "4+ conditions",
     xvar == "Sex"             & xlbl == "F"       ~ "Female",
     xvar == "Sex"             & xlbl == "M"       ~ "Male",
     TRUE                                          ~ xlbl
@@ -143,13 +142,24 @@ d_wales_desc %>% mutate(
     xvar == "age_cat" & xlbl == "50-65"   ~ "50-64",
     xvar == "age_cat" & xlbl == "65-80"   ~ "65-79",
     xvar == "bmi_cat" & xlbl == "25-29.9" ~ "25.0-29.9",
-    xvar == "bmi_cat" & xlbl == "30-29.9" ~ "30.0-39.9",
+    xvar == "bmi_cat" & xlbl == "30-39.9" ~ "30.0-39.9",
+    xlbl == "(Missing)"                   ~ "(Ethnicity missing)",
     xvar == "total"                       ~ "Total",
     TRUE                                  ~ xlbl
     )
   )
 
-full_join(d_england_desc, d_wales_desc)
+# ==========================================================================
+# Pool data
+# ==========================================================================
+
+d_pool_desc <- full_join(d_england_desc, d_wales_desc) %>% mutate(
+  n_c19_complete = replace_na(as.numeric(n_c19_complete_england), 0) + replace_na(as.numeric(n_c19_complete_wales), 0),
+  n_flu_complete = replace_na(as.numeric(n_flu_complete_england), 0) + replace_na(as.numeric(n_flu_complete_wales), 0),
+  n = replace_na(as.numeric(n_england), 0) + replace_na(as.numeric(n_wales), 0),
+  perc_c19_complete = format(round(n_c19_complete*100/n, 1), nsmall = 1),
+  perc_flu_complete = format(round(n_flu_complete*100/n, 1), nsmall = 1)
+  )
 
 # ==========================================================================
 # lkps
@@ -187,23 +197,24 @@ lkp_xlbls <- c(
     "Female",
     "Male",
     # age
-    "18-50",
-    "50-65",
-    "65-80",
+    "18-49",
+    "50-64",
+    "65-79",
     "80+",
     # BMI
     "<18.5",
     "18.5-24.9",
-    "25-29.9",
-    "30-39.9",
+    "25.0-29.9",
+    "30.0-39.9",
     "40+",
+    "(BMI missing)",
     # ethnicity
     "White",
     "Asian",
     "Black",
     "Mixed",
     "Other",
-    "(Missing)",
+    "(Ethnicity missing)",
     # house hold
     "Alone",
     "2 members",

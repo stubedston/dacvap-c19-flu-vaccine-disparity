@@ -93,6 +93,7 @@ d_england_desc <-
 d_england_desc %>% mutate(
   xlbl = case_when(
     xvar == "bmi_cat"         & xlbl == "missing" ~ "(BMI missing)",
+    xvar == "bmi_cat"         & xlbl == "40+"     ~ "40.0+",
     xvar == "Ethnicity"       & xlbl == "missing" ~ "(Ethnicity missing)",
     xvar == "Ethnicity"       & xlbl == "M"       ~ "Mixed",
     xvar == "Ethnicity"       & xlbl == "W"       ~ "White",
@@ -143,6 +144,7 @@ d_wales_desc %>% mutate(
     xvar == "age_cat" & xlbl == "65-80"   ~ "65-79",
     xvar == "bmi_cat" & xlbl == "25-29.9" ~ "25.0-29.9",
     xvar == "bmi_cat" & xlbl == "30-39.9" ~ "30.0-39.9",
+    xvar == "bmi_cat" & xlbl == "40+"     ~ "40.0+",
     xlbl == "(Missing)"                   ~ "(Ethnicity missing)",
     xvar == "total"                       ~ "Total",
     TRUE                                  ~ xlbl
@@ -206,7 +208,7 @@ lkp_xlbls <- c(
     "18.5-24.9",
     "25.0-29.9",
     "30.0-39.9",
-    "40+",
+    "40.0+",
     "(BMI missing)",
     # ethnicity
     "White",

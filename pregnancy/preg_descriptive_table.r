@@ -152,7 +152,7 @@ lkp_xlbls <- c("Total",
             "18.5-24.9",
             "25-29.9",
             "30-39.9",
-            "40+",
+            "40.0+",
             "(BMI missing)",
             # ethnicity
             "White",
@@ -189,6 +189,7 @@ d_pool_desc_c19 %>%
       xlbl = case_when(
         xlbl == "(Missing)" ~ "(Ethnicity missing)",
         xlbl == "missing"   ~ "(BMI missing)",
+        xlbl == "40+"       ~ "40.0+",
         TRUE                ~ xlbl
         ) %>% factor(levels = lkp_xlbls),
       perc_c19_complete = format(as.numeric(perc_c19_complete), nsmall = 1)
@@ -224,6 +225,7 @@ d_pool_desc_flu %>%
       xlbl = case_when(
         xlbl == "(Missing)" ~ "(Ethnicity missing)",
         xlbl == "missing"   ~ "(BMI missing)",
+        xlbl == "40+"       ~ "40.0+",
         TRUE                ~ xlbl
         ) %>% factor(levels = lkp_xlbls),
       perc_flu_complete = format(as.numeric(perc_flu_complete), nsmall = 1)

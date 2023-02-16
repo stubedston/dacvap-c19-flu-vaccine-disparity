@@ -117,7 +117,7 @@ lkp_xvar_table <- c(
 )
 
 lkp_xvar <- c(
-    "IMD (2019)\nquintile"           = "imd",
+    "IMD\nquintile"                  = "imd",
     "Age"                            = "age",
     "Sex"                            = "sex",
     "Ethnicity"                      = "ethnicity",

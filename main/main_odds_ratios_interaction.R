@@ -29,6 +29,8 @@ if (!is.null(sessionInfo()$otherPkgs)) {
     )
 }
 
+cbPalette <- c("#0072B2", "#E69F00", "#009E73", "#F0E442", "#56B4E9", "#D55E00", "#CC79A7")
+
 # ==========================================================================
 # Load
 # ==========================================================================
@@ -60,6 +62,28 @@ for (pkg in pkgs) {
 # AWAITING META-ANALYSIS RE-RUN
 
 d_meta_or <- read.csv("data_odds_ratios/wales/wales_main_coefs_interaction.csv")
+d_pool_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive.csv")
+d_pool_desc <- d_pool_desc[2:nrow(d_pool_desc),1:3]
+d_pool_desc <- d_pool_desc %>% filter(xvar != "wimd2019_quintile")
+
+d_refs <- d_pool_desc[!(d_pool_desc[,"xlbl"] %in% d_meta_or[,"xlbl"]),] %>%
+    mutate(
+        or = 1,
+        or_low = 1,
+        or_high = 1,
+        model_type = "ref",
+        vacc = "c19"
+    )
+
+d_refs <- d_refs %>% rbind(
+    d_refs %>% mutate(
+        vacc = "flu"
+        )
+    )
+
+d_meta_or <- bind_rows(d_meta_or, d_refs)
+
+
 
 d_meta_or <-
 d_meta_or %>% mutate(
@@ -76,39 +100,34 @@ d_meta_or %>% mutate(
     )
   )
 
+
 # ==========================================================================
 # lkps
 # ==========================================================================
 
 lkp_xvar_table <- c(
-    "IMD quintile"                   = "imd",
-    "Age"                            = "age",
-    "Sex"                            = "sex",
-    "Ethnicity"                      = "ethnicity",
-    "BMI"                            = "bmi",
-    "Household composition"          = "household_status",
-    "Urban/rural class"              = "urban_rural",
+    "IMD quintile"                   = "wimd2019_quintile",
+    "Age"                            = "age_cat",
+    "Sex"                            = "gndr_cd",
+    "Ethnicity"                      = "ethn_cat",
+    "BMI"                            = "bmi_cat",
+    "Household composition"          = "hh_cat",
+    "Urban/rural class"              = "urban_rural_class",
     "No. of clinical conditions"     = "num_clinical_conditions_cat"
 )
 
 lkp_xvar <- c(
-    "IMD (2019)\nquintile"           = "imd",
-    "Age"                            = "age",
-    "Sex"                            = "sex",
-    "Ethnicity"                      = "ethnicity",
-    "BMI"                            = "bmi",
-    "Household\ncomposition"         = "household_status",
-    "Urban/rural\nclass"             = "urban_rural",
+    "IMD\nquintile"                  = "wimd2019_quintile",
+    "Age"                            = "age_cat",
+    "Sex"                            = "gndr_cd",
+    "Ethnicity"                      = "ethn_cat",
+    "BMI"                            = "bmi_cat",
+    "Household\ncomposition"         = "hh_cat",
+    "Urban/rural\nclass"             = "urban_rural_class",
     "No. of clinical\nconditions"    = "num_clinical_conditions_cat"
 )
 
 lkp_xlbls <- c(
-    # wimd
-    "1st (Most deprived)",
-    "2nd",
-    "3rd",
-    "4th",
-    "5th (Least deprived)",
     # sex
     "Female",
     "Male",
@@ -164,39 +183,6 @@ lkp_vacc <- c(
 # ==========================================================================
 # Make pretty table
 # ==========================================================================
-
-colnames(d_pool_or) <- c("or", "or_low", "or_high", "country", "xvar", "xlbl", "vacc")
-
-d_pool_or <-
-d_pool_or %>% mutate(
-    xlbl = case_when(
-        xvar == "ethnicity" & xlbl == "Male" ~ "Mixed",
-        xlbl == "2"                          ~ "2 members",
-        xlbl == "hh 1"                       ~ "Alone",
-        xlbl == "hh 3"                       ~ "3 members",
-        xlbl == "hh 4"                       ~ "4 members",
-        xlbl == "hh 5"                       ~ "5 members",
-        xlbl == "hh 6-10"                    ~ "6-10 members",
-        xlbl == "hh 7+"                      ~ "11+ members",
-        xlbl == "imd 5 - Least deprived"     ~ "5th (Least deprived)",
-        xlbl == "imd 1 - Most deprived"      ~ "1st (Most deprived)",
-        xlbl == "imd 2"                      ~ "2nd",
-        xlbl == "imd 3"                      ~ "3rd",
-        xlbl == "imd 4"                      ~ "4th",
-        xlbl == "rsk 0"                      ~ "No conditions",
-        xlbl == "rsk 1"                      ~ "1 condition",
-        xlbl == "rsk 2"                      ~ "2 conditions",
-        xlbl == "rsk 3"                      ~ "3 conditions",
-        xlbl == "rsk 4+"                     ~ "4+ conditions",
-        TRUE                                 ~ xlbl
-        )
-    )
-
-d_england_or <- d_pool_or %>% filter(country == "england")
-d_wales_or   <- d_pool_or %>% filter(country == "wales")
-d_meta_or    <- d_pool_or %>% filter(country == "meta")
-
-
 
 d_meta_or_pretty <-
 d_meta_or %>% 
@@ -255,15 +241,9 @@ d_meta_or %>%
     mutate(
         xvar = factor(xvar, lkp_xvar, names(lkp_xvar)),
         xlbl = xlbl %>% fct_relevel( # orders based numerically or by population
-            # wimd
-            "1st (Most deprived)",
-            "2nd",
-            "3rd",
-            "4th",
-            "5th (Least deprived)",
             # sex
             "Female",
-            "Male",         
+            "Male",
             # age
             "18-49",
             "50-64",
@@ -311,7 +291,7 @@ ggplot(aes(
     geom_vline(xintercept = 1) +
     geom_pointrange(position = position_dodge(0.4)) +
     scale_colour_manual(values = cbPalette) +
-    coord_cartesian(xlim = c(0, 3.4)) +
+    coord_cartesian(xlim = c(0, 2.5)) +
     theme(
         legend.position = "none",
         axis.title.y = element_blank(),
@@ -329,12 +309,12 @@ cat("Saving...\n")
 
 write_csv(
   d_meta_or_pretty,
-  file = "data_odds_ratios/meta_main_coefs_overall_pretty.csv"
+  file = "data_odds_ratios/meta_main_coefs_interaction_pretty.csv"
   )
 
 ggsave(
   plot     = p_meta_or,
-  filename = "meta_main_coefs_overall.png",
+  filename = "meta_main_coefs_interaction.png",
   path     = "plots",
   width    = 10,
   height   = 10

@@ -259,7 +259,7 @@ cat("Saving...\n")
 
 write_csv(
   d_meta_or_pretty,
-  file = "data_odds_ratios/meta_main_coefs_interaction_pretty.csv"
+  file = "data_odds_ratios/meta_preg_coefs_interaction_pretty.csv"
   )
 
 ggsave(

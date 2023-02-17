@@ -61,70 +61,60 @@ for (pkg in pkgs) {
 
 # AWAITING META-ANALYSIS RE-RUN
 
-d_meta_or <- read.csv("data_odds_ratios/wales/wales_main_coefs_interaction.csv")
-d_pool_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive.csv")
-d_pool_desc <- d_pool_desc[2:nrow(d_pool_desc),1:3]
-d_pool_desc <- d_pool_desc %>% filter(xvar != "wimd2019_quintile")
+d_meta_or_c19 <- read.csv("data_odds_ratios/meta_main_coefs_interaction_c19_TEMP.csv")
+d_meta_or_flu <- read.csv("data_odds_ratios/meta_main_coefs_interaction_flu_TEMP.csv")
 
-d_refs <- d_pool_desc[!(d_pool_desc[,"xlbl"] %in% d_meta_or[,"xlbl"]),] %>%
-    mutate(
-        or = 1,
-        or_low = 1,
-        or_high = 1,
-        model_type = "ref",
-        vacc = "c19"
-    )
+d_meta_or_c19$vacc <- "c19"
+d_meta_or_flu$vacc <- "flu"
 
-d_refs <- d_refs %>% rbind(
-    d_refs %>% mutate(
-        vacc = "flu"
+d_meta_or <- rbind(d_meta_or_c19, d_meta_or_flu)
+d_meta_or <- d_meta_or[,2:ncol(d_meta_or)]
+
+d_meta_or <- d_meta_or %>% filter(xvar != "SES quintile") %>% mutate(
+    xlbl = case_when(
+        xvar == "Ethnicity" & xlbl == "Male" ~ "Mixed",
+        xlbl == "2"                          ~ "2 members",
+        xlbl == "hh 1"                       ~ "Alone",
+        xlbl == "hh 3"                       ~ "3 members",
+        xlbl == "hh 4"                       ~ "4 members",
+        xlbl == "hh 5"                       ~ "5 members",
+        xlbl == "hh 6-10"                    ~ "6-10 members",
+        xlbl == "hh 7+"                      ~ "11+ members",
+        xlbl == "imd 5 - Least deprived"     ~ "5th (Least deprived)",
+        xlbl == "imd 1 - Most deprived"      ~ "1st (Most deprived)",
+        xlbl == "imd 2"                      ~ "2nd",
+        xlbl == "imd 3"                      ~ "3rd",
+        xlbl == "imd 4"                      ~ "4th",
+        xlbl == "rsk 0"                      ~ "No conditions",
+        xlbl == "rsk 1"                      ~ "1 condition",
+        xlbl == "rsk 2"                      ~ "2 conditions",
+        xlbl == "rsk 3"                      ~ "3 conditions",
+        xlbl == "rsk 4+"                     ~ "4+ conditions",
+        TRUE                                 ~ xlbl
+        ),
+    xvar = case_when(
+        xvar == "Urban/rural" ~ "Urban/rural class",
+        xvar == "Number of household members" ~ "Household composition",
+        xvar == "No. QCovid comorbidities" ~ "No. of clinical conditions",
+        TRUE ~ xvar
         )
     )
-
-d_meta_or <- bind_rows(d_meta_or, d_refs)
-
-
-
-d_meta_or <-
-d_meta_or %>% mutate(
-  xlbl = case_when(
-    xvar == "age_cat" & xlbl == "18-50"   ~ "18-49",
-    xvar == "age_cat" & xlbl == "50-65"   ~ "50-64",
-    xvar == "age_cat" & xlbl == "65-80"   ~ "65-79",
-    xvar == "bmi_cat" & xlbl == "25-29.9" ~ "25.0-29.9",
-    xvar == "bmi_cat" & xlbl == "30-39.9" ~ "30.0-39.9",
-    xvar == "bmi_cat" & xlbl == "40+"     ~ "40.0+",
-    xlbl == "(Missing)"                   ~ "(Ethnicity missing)",
-    xvar == "total"                       ~ "Total",
-    TRUE                                  ~ xlbl
-    )
-  )
-
+colnames(d_meta_or) <- c("xvar", "xlbl", "or", "or_low", "or_high", "vacc")
 
 # ==========================================================================
 # lkps
 # ==========================================================================
 
-lkp_xvar_table <- c(
-    "IMD quintile"                   = "wimd2019_quintile",
-    "Age"                            = "age_cat",
-    "Sex"                            = "gndr_cd",
-    "Ethnicity"                      = "ethn_cat",
-    "BMI"                            = "bmi_cat",
-    "Household composition"          = "hh_cat",
-    "Urban/rural class"              = "urban_rural_class",
-    "No. of clinical conditions"     = "num_clinical_conditions_cat"
-)
 
 lkp_xvar <- c(
-    "IMD\nquintile"                  = "wimd2019_quintile",
-    "Age"                            = "age_cat",
-    "Sex"                            = "gndr_cd",
-    "Ethnicity"                      = "ethn_cat",
-    "BMI"                            = "bmi_cat",
-    "Household\ncomposition"         = "hh_cat",
-    "Urban/rural\nclass"             = "urban_rural_class",
-    "No. of clinical\nconditions"    = "num_clinical_conditions_cat"
+    "IMD\nquintile"                  = "IMD quintile",
+    "Age"                            = "Age",
+    "Sex"                            = "Sex",
+    "Ethnicity"                      = "Ethnicity",
+    "BMI"                            = "BMI",
+    "Household\ncomposition"         = "Household composition",
+    "Urban/rural\nclass"             = "Urban/rural class",
+    "No. of clinical\nconditions"    = "No. of clinical conditions"
 )
 
 lkp_xlbls <- c(
@@ -201,7 +191,7 @@ d_meta_or %>%
 
 d_meta_or_pretty <-
     d_meta_or_pretty %>% mutate(
-        Variable = factor(xvar, lkp_xvar_table, names(lkp_xvar_table)),
+        Variable = xvar,
         Category = xlbl,
         `OR (95% CI)` = case_when(
             or == 1 & or_low == 1 & or_high == 1 ~ "1",
@@ -240,45 +230,7 @@ d_meta_or %>%
     filter(!is.na(model_type)) %>%
     mutate(
         xvar = factor(xvar, lkp_xvar, names(lkp_xvar)),
-        xlbl = xlbl %>% fct_relevel( # orders based numerically or by population
-            # sex
-            "Female",
-            "Male",
-            # age
-            "18-49",
-            "50-64",
-            "65-79",
-            "80+",
-            # BMI
-            "<18.5",
-            "18.5-24.9",
-            "25.0-29.9",
-            "30.0-39.9",
-            "40.0+",
-            # ethnicity
-            "White",
-            "Asian",
-            "Black",
-            "Mixed",
-            "Other",
-            # house hold
-            "Alone",
-            "2 members",
-            "3 members",
-            "4 members",
-            "5 members",
-            "6-10 members",
-            "11+ members",
-            # clin conditions
-            "No conditions",
-            "1 condition",
-            "2 conditions",
-            "3 conditions",
-            "4+ conditions",
-            # Rurality
-            "Urban",
-            "Rural"
-        ),
+        xlbl = xlbl %>% fct_relevel(lkp_xlbls),
         model_type = factor(model_type, lkp_model_type, names(lkp_model_type)),
         vacc = factor(vacc, lkp_vacc, names(lkp_vacc))
     ) %>%
@@ -298,7 +250,7 @@ ggplot(aes(
         strip.placement = "outside",
         strip.text.y.left = element_text(angle = 0)
     ) +
-    ggtitle("ORs for vaccine uptake by type")
+    ggtitle("ORs for influence of IMD by type")
 
 p_meta_or
 

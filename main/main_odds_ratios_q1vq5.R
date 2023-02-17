@@ -270,45 +270,7 @@ d_meta_or_plot %>%
     filter(!is.na(model_type)) %>%
     mutate(
         xvar = xvar,
-        xlbl = xlbl %>% fct_relevel( # orders based numerically or by population
-            # sex
-            "Female",
-            "Male",         
-            # age
-            "18-49",
-            "50-64",
-            "65-79",
-            "80+",
-            # BMI
-            "<18.5",
-            "18.5-24.9",
-            "25.0-29.9",
-            "30.0-39.9",
-            "40.0+",
-            # ethnicity
-            "White",
-            "Asian",
-            "Black",
-            "Mixed",
-            "Other",
-            # house hold
-            "Alone",
-            "2 members",
-            "3 members",
-            "4 members",
-            "5 members",
-            "6-10 members",
-            "11+ members",
-            # clin conditions
-            "No conditions",
-            "1 condition",
-            "2 conditions",
-            "3 conditions",
-            "4+ conditions",
-            # Rurality
-            "Urban",
-            "Rural"
-        ),
+        xlbl = xlbl %>% fct_relevel(lkp_xlbls),
         model_type = factor(model_type, lkp_model_type, names(lkp_model_type)),
         vacc = factor(vacc, lkp_vacc, names(lkp_vacc))
     ) %>%

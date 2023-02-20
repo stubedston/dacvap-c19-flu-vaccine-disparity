@@ -70,7 +70,7 @@ d_meta_or_flu$vacc <- "flu"
 d_meta_or <- rbind(d_meta_or_c19, d_meta_or_flu)
 d_meta_or <- d_meta_or[,2:ncol(d_meta_or)]
 
-d_meta_or <- d_meta_or %>% filter(xvar != "SES quintile") %>% mutate(
+d_meta_or <- d_meta_or %>% mutate(
     xlbl = case_when(
         xvar == "Ethnicity" & xlbl == "Male" ~ "Mixed",
         xlbl == "2"                          ~ "2 members",
@@ -96,6 +96,7 @@ d_meta_or <- d_meta_or %>% filter(xvar != "SES quintile") %>% mutate(
         xvar == "Urban/rural" ~ "Urban/rural class",
         xvar == "Number of household members" ~ "Household composition",
         xvar == "No. QCovid comorbidities" ~ "No. of clinical conditions",
+        xvar == "SES quintile" ~ "IMD quintile",
         TRUE ~ xvar
         )
     )

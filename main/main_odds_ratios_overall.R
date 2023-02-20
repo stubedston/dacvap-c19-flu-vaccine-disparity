@@ -59,72 +59,60 @@ for (pkg in pkgs) {
 # Load data
 # ==========================================================================
 
-# AWAITING META-ANALYSIS RE-RUN
+d_meta_or_c19 <- read.csv("data_odds_ratios/meta_main_coefs_overall_c19.csv")
+d_meta_or_flu <- read.csv("data_odds_ratios/meta_main_coefs_overall_flu.csv")
 
-d_pool_or_c19 <- read.csv("data_odds_ratios/meta_main_coefs_overall_c19_TEMP.csv")
-d_pool_or_flu <- read.csv("data_odds_ratios/meta_main_coefs_overall_flu_TEMP.csv")
+d_meta_or_c19$vacc <- "c19"
+d_meta_or_flu$vacc <- "flu"
 
-lkp_xvar_flu <- d_pool_or_c19[,8:9] %>% distinct()
-colnames(lkp_xvar_flu) <- c("xvar2", "xlbl")
+d_meta_or <- rbind(d_meta_or_c19, d_meta_or_flu)
+d_meta_or <- d_meta_or[,2:ncol(d_meta_or)]
 
-d_pool_or_flu <- d_pool_or_flu %>% mutate(
+d_meta_or <- d_meta_or %>% mutate(
     xlbl = case_when(
         xvar == "Ethnicity" & xlbl == "Male" ~ "Mixed",
-        TRUE ~ xlbl
+        xlbl == "2"                          ~ "2 members",
+        xlbl == "hh 1"                       ~ "Alone",
+        xlbl == "hh 3"                       ~ "3 members",
+        xlbl == "hh 4"                       ~ "4 members",
+        xlbl == "hh 5"                       ~ "5 members",
+        xlbl == "hh 6-10"                    ~ "6-10 members",
+        xlbl == "hh 7+"                      ~ "11+ members",
+        xlbl == "imd 5 - Least deprived"     ~ "5th (Least deprived)",
+        xlbl == "imd 1 - Most deprived"      ~ "1st (Most deprived)",
+        xlbl == "imd 2"                      ~ "2nd",
+        xlbl == "imd 3"                      ~ "3rd",
+        xlbl == "imd 4"                      ~ "4th",
+        xlbl == "rsk 0"                      ~ "No conditions",
+        xlbl == "rsk 1"                      ~ "1 condition",
+        xlbl == "rsk 2"                      ~ "2 conditions",
+        xlbl == "rsk 3"                      ~ "3 conditions",
+        xlbl == "rsk 4+"                     ~ "4+ conditions",
+        TRUE                                 ~ xlbl
+        ),
+    xvar = case_when(
+        xvar == "Urban/rural" ~ "Urban/rural class",
+        xvar == "Number of household members" ~ "Household composition",
+        xvar == "No. QCovid comorbidities" ~ "No. of clinical conditions",
+        xvar == "SES quintile" ~ "IMD quintile",
+        TRUE ~ xvar
         )
     )
-
-lkp_xvar_flu <- lkp_xvar_flu %>% mutate(
-    xlbl = case_when(
-        xvar2 == "ethnicity" & xlbl == "Male" ~ "Mixed",
-        TRUE ~ xlbl
-        )
-    )
-
-d_pool_or_flu <- left_join(d_pool_or_flu, lkp_xvar_flu) %>% mutate(
-    xvar = xvar2,
-    country = "meta",
-    estimate = est,
-    vacc = "flu"
-    ) %>% select(
-    estimate,
-    ci_low,
-    ci_high,
-    country,
-    xvar,
-    xlbl,
-    vacc
-    )
-
-d_pool_or_c19 <- d_pool_or_c19[,c(2,4,5,6,8,9)]
-d_pool_or_c19$vacc <- "c19"
-
-d_pool_or <- rbind(d_pool_or_c19, d_pool_or_flu)
+colnames(d_meta_or) <- c("xvar", "xlbl", "or", "or_low", "or_high", "vacc")
 
 # ==========================================================================
 # lkps
 # ==========================================================================
 
-lkp_xvar_table <- c(
-    "IMD quintile"                   = "imd",
-    "Age"                            = "age",
-    "Sex"                            = "sex",
-    "Ethnicity"                      = "ethnicity",
-    "BMI"                            = "bmi",
-    "Household composition"          = "household_status",
-    "Urban/rural class"              = "urban_rural",
-    "No. of clinical conditions"     = "num_clinical_conditions_cat"
-)
-
 lkp_xvar <- c(
-    "IMD\nquintile"                  = "imd",
-    "Age"                            = "age",
-    "Sex"                            = "sex",
-    "Ethnicity"                      = "ethnicity",
-    "BMI"                            = "bmi",
-    "Household\ncomposition"         = "household_status",
-    "Urban/rural\nclass"             = "urban_rural",
-    "No. of clinical\nconditions"    = "num_clinical_conditions_cat"
+    "IMD\nquintile"                  = "IMD quintile",
+    "Age"                            = "Age",
+    "Sex"                            = "Sex",
+    "Ethnicity"                      = "Ethnicity",
+    "BMI"                            = "BMI",
+    "Household\ncomposition"         = "Household composition",
+    "Urban/rural\nclass"             = "Urban/rural class",
+    "No. of clinical\nconditions"    = "No. of clinical conditions"
 )
 
 lkp_xlbls <- c(
@@ -190,39 +178,6 @@ lkp_vacc <- c(
 # Make pretty table
 # ==========================================================================
 
-colnames(d_pool_or) <- c("or", "or_low", "or_high", "country", "xvar", "xlbl", "vacc")
-
-d_pool_or <-
-d_pool_or %>% mutate(
-    xlbl = case_when(
-        xvar == "ethnicity" & xlbl == "Male" ~ "Mixed",
-        xlbl == "2"                          ~ "2 members",
-        xlbl == "hh 1"                       ~ "Alone",
-        xlbl == "hh 3"                       ~ "3 members",
-        xlbl == "hh 4"                       ~ "4 members",
-        xlbl == "hh 5"                       ~ "5 members",
-        xlbl == "hh 6-10"                    ~ "6-10 members",
-        xlbl == "hh 7+"                      ~ "11+ members",
-        xlbl == "imd 5 - Least deprived"     ~ "5th (Least deprived)",
-        xlbl == "imd 1 - Most deprived"      ~ "1st (Most deprived)",
-        xlbl == "imd 2"                      ~ "2nd",
-        xlbl == "imd 3"                      ~ "3rd",
-        xlbl == "imd 4"                      ~ "4th",
-        xlbl == "rsk 0"                      ~ "No conditions",
-        xlbl == "rsk 1"                      ~ "1 condition",
-        xlbl == "rsk 2"                      ~ "2 conditions",
-        xlbl == "rsk 3"                      ~ "3 conditions",
-        xlbl == "rsk 4+"                     ~ "4+ conditions",
-        TRUE                                 ~ xlbl
-        )
-    )
-
-d_england_or <- d_pool_or %>% filter(country == "england")
-d_wales_or   <- d_pool_or %>% filter(country == "wales")
-d_meta_or    <- d_pool_or %>% filter(country == "meta")
-
-
-
 d_meta_or_pretty <-
 d_meta_or %>% 
     mutate(
@@ -240,7 +195,7 @@ d_meta_or %>%
 
 d_meta_or_pretty <-
     d_meta_or_pretty %>% mutate(
-        Variable = factor(xvar, lkp_xvar_table, names(lkp_xvar_table)),
+        Variable = xvar,
         Category = xlbl,
         `OR (95% CI)` = case_when(
             or == 1 & or_low == 1 & or_high == 1 ~ "1",

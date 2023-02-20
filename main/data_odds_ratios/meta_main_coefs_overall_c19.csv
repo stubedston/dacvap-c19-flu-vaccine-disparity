@@ -1,0 +1,36 @@
+vacc_doseb_name,xvar,xlbl,est,ci_low,ci_high
+NA,Sex,Female,1.00,1.00,1.00
+NA,Sex,Male,0.83,0.83,0.84
+NA,Age,80+,1.00,1.00,1.00
+NA,Age,18-49,0.13,0.13,0.13
+NA,Age,50-64,0.39,0.38,0.39
+NA,Age,65-79,0.84,0.83,0.86
+NA,Ethnicity,White,1.00,1.00,1.00
+NA,Ethnicity,Male,0.54,0.53,0.55
+NA,Ethnicity,Asian,0.63,0.62,0.64
+NA,Ethnicity,Black,0.30,0.29,0.30
+NA,Ethnicity,Other,0.41,0.40,0.42
+NA,SES quintile,imd 5 - Least deprived,1.00,1.00,1.00
+NA,SES quintile,imd 1 - Most deprived,0.34,0.34,0.35
+NA,SES quintile,imd 2,0.49,0.48,0.49
+NA,SES quintile,imd 3,0.61,0.60,0.62
+NA,SES quintile,imd 4,0.76,0.75,0.77
+NA,BMI,18.5-24.9,1.00,1.00,1.00
+NA,BMI,<18.5,0.64,0.62,0.65
+NA,BMI,25.0-29.9,1.26,1.25,1.27
+NA,BMI,30.0-39.9,1.39,1.38,1.40
+NA,BMI,40.0+,1.59,1.57,1.61
+NA,No. QCovid comorbidities,rsk 0,1.00,1.00,1.00
+NA,No. QCovid comorbidities,rsk 1,1.26,1.25,1.27
+NA,No. QCovid comorbidities,rsk 2,1.50,1.48,1.51
+NA,No. QCovid comorbidities,rsk 3,1.56,1.53,1.59
+NA,No. QCovid comorbidities,rsk 4+,1.54,1.50,1.59
+NA,Urban/rural,Urban,1.00,1.00,1.00
+NA,Urban/rural,Rural,1.21,1.20,1.22
+NA,Number of household members,2,1.00,1.00,1.00
+NA,Number of household members,hh 1,0.63,0.63,0.64
+NA,Number of household members,hh 3,0.78,0.77,0.78
+NA,Number of household members,hh 4,0.69,0.68,0.70
+NA,Number of household members,hh 5,0.54,0.53,0.55
+NA,Number of household members,hh 6-10,0.42,0.41,0.42
+NA,Number of household members,hh 7+,0.56,0.54,0.58

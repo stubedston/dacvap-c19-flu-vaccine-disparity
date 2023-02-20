@@ -21,7 +21,7 @@ set_refs <- function(df) {
     mutate(
         bmi_cat   = fct_relevel(bmi_cat, "18.5-24.9"),
         hh_cat    = fct_relevel(hh_cat, "2 members"),
-        age_cat = fct_relevel(age_cat, "40-49"),
+        age_cat = fct_relevel(age_cat, "25-29"),
         ethn_cat  = fct_relevel(ethn_cat, "White"),
         urban_rural_class = fct_relevel(urban_rural_class, "Urban"),
         wimd2019_quintile = fct_relevel(wimd2019_quintile, "5th (Least deprived)")

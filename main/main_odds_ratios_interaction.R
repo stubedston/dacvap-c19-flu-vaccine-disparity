@@ -59,10 +59,8 @@ for (pkg in pkgs) {
 # Load data
 # ==========================================================================
 
-# AWAITING META-ANALYSIS RE-RUN
-
-d_meta_or_c19 <- read.csv("data_odds_ratios/meta_main_coefs_interaction_c19_TEMP.csv")
-d_meta_or_flu <- read.csv("data_odds_ratios/meta_main_coefs_interaction_flu_TEMP.csv")
+d_meta_or_c19 <- read.csv("data_odds_ratios/meta_main_coefs_interaction_c19.csv")
+d_meta_or_flu <- read.csv("data_odds_ratios/meta_main_coefs_interaction_flu.csv")
 
 d_meta_or_c19$vacc <- "c19"
 d_meta_or_flu$vacc <- "flu"
@@ -243,7 +241,7 @@ ggplot(aes(
     geom_vline(xintercept = 1) +
     geom_pointrange(position = position_dodge(0.4)) +
     scale_colour_manual(values = cbPalette) +
-    coord_cartesian(xlim = c(0, 2.5)) +
+    coord_cartesian(xlim = c(0, 2)) +
     theme(
         legend.position = "none",
         axis.title.y = element_blank(),

@@ -12,21 +12,21 @@ NA,Ethnicity,Black,0.34,0.33,0.35
 NA,Ethnicity,Other,0.44,0.42,0.46
 NA,SES quintile,imd 5 - Least deprived,1.00,1.00,1.00
 NA,BMI,18.5-24.9,1.00,1.00,1.00
-NA,BMI,<18.5,0.65,0.62,0.68
+NA,BMI,<18.5,0.64,0.62,0.67
 NA,BMI,25.0-29.9,1.33,1.31,1.35
 NA,BMI,30.0-39.9,1.50,1.48,1.53
-NA,BMI,40.0+,1.75,1.71,1.79
+NA,BMI,40.0+,1.74,1.70,1.79
 NA,No. QCovid comorbidities,rsk 0,1.00,1.00,1.00
 NA,No. QCovid comorbidities,rsk 1,1.22,1.20,1.24
 NA,No. QCovid comorbidities,rsk 2,1.42,1.39,1.45
-NA,No. QCovid comorbidities,rsk 3,1.55,1.50,1.60
+NA,No. QCovid comorbidities,rsk 3,1.55,1.50,1.61
 NA,No. QCovid comorbidities,rsk 4+,1.57,1.50,1.65
 NA,Urban/rural,Urban,1.00,1.00,1.00
 NA,Urban/rural,Rural,1.19,1.16,1.23
 NA,Number of household members,2,1.00,1.00,1.00
 NA,Number of household members,hh 1,0.73,0.71,0.74
 NA,Number of household members,hh 3,0.85,0.83,0.86
-NA,Number of household members,hh 4,0.75,0.73,0.76
+NA,Number of household members,hh 4,0.75,0.73,0.77
 NA,Number of household members,hh 5,0.60,0.58,0.62
 NA,Number of household members,hh 6-10,0.47,0.45,0.49
-NA,Number of household members,hh 7+,0.75,0.70,0.81
+NA,Number of household members,hh 7+,0.75,0.70,0.80

@@ -1,0 +1,30 @@
+vacc_doseb_name,xvar,xlbl,est,ci_low,ci_high
+NA,Age,25-29,1.00,1.00,1.00
+NA,Age,18-24,0.68,0.61,0.75
+NA,Age,30-34,1.43,1.33,1.53
+NA,Age,35-39,1.72,1.59,1.87
+NA,Age,40-49,1.91,1.69,2.16
+NA,Ethnicity,White,1.00,1.00,1.00
+NA,Ethnicity,Male,0.74,0.60,0.90
+NA,Ethnicity,Asian,0.91,0.80,1.03
+NA,Ethnicity,Black,0.51,0.40,0.67
+NA,Ethnicity,Other,0.67,0.52,0.87
+NA,BMI,18.5-24.9,1.00,1.00,1.00
+NA,BMI,<18.5,0.88,0.76,1.01
+NA,BMI,25.0-29.9,1.03,0.96,1.10
+NA,BMI,30.0-39.9,1.00,0.92,1.09
+NA,BMI,40.0+,0.72,0.60,0.86
+NA,No. QCovid comorbidities,rsk 0,1.00,1.00,1.00
+NA,No. QCovid comorbidities,rsk 1,0.64,0.60,0.69
+NA,No. QCovid comorbidities,rsk 2,0.76,0.64,0.90
+NA,No. QCovid comorbidities,rsk 3,0.68,0.43,1.07
+NA,No. QCovid comorbidities,rsk 4+,0.38,0.13,1.15
+NA,Urban/rural,Urban,1.00,1.00,1.00
+NA,Urban/rural,Rural,1.03,0.97,1.10
+NA,Number of household members,2,1.00,1.00,1.00
+NA,Number of household members,hh 1,0.77,0.73,0.82
+NA,Number of household members,hh 3,0.89,0.81,0.98
+NA,Number of household members,hh 4,0.89,0.78,1.01
+NA,Number of household members,hh 5,0.82,0.68,0.99
+NA,Number of household members,hh 6-10,0.69,0.55,0.87
+NA,Number of household members,hh 7+,0.35,0.12,1.02

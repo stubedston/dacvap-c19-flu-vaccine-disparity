@@ -1,9 +1,9 @@
 vacc_doseb_name,xvar,xlbl,est,ci_low,ci_high
-NA,Age,40-49,1.00,1.00,1.00
-NA,Age,18-24,1.08,0.90,1.29
-NA,Age,25-29,0.90,0.76,1.06
-NA,Age,30-34,0.80,0.68,0.93
-NA,Age,35-39,0.77,0.65,0.92
+NA,Age,25-29,1.00,1.00,1.00
+NA,Age,18-24,1.20,1.06,1.36
+NA,Age,30-34,0.90,0.82,0.99
+NA,Age,35-39,0.87,0.78,0.97
+NA,Age,40-49,1.12,0.95,1.31
 NA,Ethnicity,White,1.00,1.00,1.00
 NA,Ethnicity,Male,1.15,0.90,1.48
 NA,Ethnicity,Asian,1.24,1.07,1.44

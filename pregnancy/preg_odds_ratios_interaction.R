@@ -61,8 +61,8 @@ for (pkg in pkgs) {
 
 # AWAITING META-ANALYSIS RE-RUN
 
-d_meta_or_c19 <- read.csv("data_odds_ratios/meta_preg_coefs_interaction_c19_TEMP.csv")
-d_meta_or_flu <- read.csv("data_odds_ratios/meta_preg_coefs_interaction_flu_TEMP.csv")
+d_meta_or_c19 <- read.csv("data_odds_ratios/meta_preg_coefs_interaction_c19.csv")
+d_meta_or_flu <- read.csv("data_odds_ratios/meta_preg_coefs_interaction_flu.csv")
 
 d_meta_or_c19$vacc <- "c19"
 d_meta_or_flu$vacc <- "flu"

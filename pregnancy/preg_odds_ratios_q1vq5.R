@@ -61,10 +61,10 @@ for (pkg in pkgs) {
 
 # AWAITING META-ANALYSIS RE-RUN
 
-d_meta_or_q1_c19 <- read.csv("data_odds_ratios/meta_preg_coefs_q1_c19_TEMP.csv")
-d_meta_or_q1_flu <- read.csv("data_odds_ratios/meta_preg_coefs_q1_flu_TEMP.csv")
-d_meta_or_q5_c19 <- read.csv("data_odds_ratios/meta_preg_coefs_q5_c19_TEMP.csv")
-d_meta_or_q5_flu <- read.csv("data_odds_ratios/meta_preg_coefs_q5_flu_TEMP.csv")
+d_meta_or_q1_c19 <- read.csv("data_odds_ratios/meta_preg_coefs_q1_c19.csv")
+d_meta_or_q1_flu <- read.csv("data_odds_ratios/meta_preg_coefs_q1_flu.csv")
+d_meta_or_q5_c19 <- read.csv("data_odds_ratios/meta_preg_coefs_q5_c19.csv")
+d_meta_or_q5_flu <- read.csv("data_odds_ratios/meta_preg_coefs_q5_flu.csv")
 
 d_meta_or_q1_c19$q <- 1
 d_meta_or_q1_flu$q <- 1

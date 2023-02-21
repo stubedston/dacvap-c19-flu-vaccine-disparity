@@ -192,7 +192,8 @@ d_pool_desc_c19 %>%
         xlbl == "40+"       ~ "40.0+",
         TRUE                ~ xlbl
         ) %>% factor(levels = lkp_xlbls),
-      perc_c19_complete = format(as.numeric(perc_c19_complete), nsmall = 1)
+      perc_c19_complete = format(as.numeric(perc_c19_complete), nsmall = 1),
+      n_c19_complete = format(as.numeric(n_c19_complete), big.mark = ",")
     ) %>%
     select(
       xvar,
@@ -228,7 +229,8 @@ d_pool_desc_flu %>%
         xlbl == "40+"       ~ "40.0+",
         TRUE                ~ xlbl
         ) %>% factor(levels = lkp_xlbls),
-      perc_flu_complete = format(as.numeric(perc_flu_complete), nsmall = 1)
+      perc_flu_complete = format(as.numeric(perc_flu_complete), nsmall = 1),
+      n_flu_complete = format(as.numeric(n_flu_complete), big.mark = ",")
     ) %>%
     select(
       xvar,

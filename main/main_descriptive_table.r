@@ -57,7 +57,7 @@ for (pkg in pkgs) {
 # Load data
 # ==========================================================================
 
-d_wales_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive.csv")
+d_wales_desc <- read.csv("data_descriptive_tables/wales/wales_main_descriptive_overall.csv")
 d_wales_desc <- d_wales_desc[1:37, c(1, 2, 5, 7, 9)]
 colnames(d_wales_desc) <- c("xvar", "xlbl", "n_wales", "n_c19_complete_wales", "n_flu_complete_wales")
 
@@ -160,7 +160,9 @@ d_pool_desc <- full_join(d_england_desc, d_wales_desc) %>% mutate(
   n_flu_complete = replace_na(as.numeric(n_flu_complete_england), 0) + replace_na(as.numeric(n_flu_complete_wales), 0),
   n = replace_na(as.numeric(n_england), 0) + replace_na(as.numeric(n_wales), 0),
   perc_c19_complete = format(round(n_c19_complete*100/n, 1), nsmall = 1),
-  perc_flu_complete = format(round(n_flu_complete*100/n, 1), nsmall = 1)
+  perc_flu_complete = format(round(n_flu_complete*100/n, 1), nsmall = 1),
+  n_c19_complete = format(n_c19_complete, big.mark = ","),
+  n_flu_complete = format(n_flu_complete, big.mark = ",")
   )
 
 # ==========================================================================

@@ -1,8 +1,9 @@
 # ==========================================================================
 # Clear environment
 # ==========================================================================
-cat("Clear and load!\n")
+cat("clear\n")
 
+# set working directory
 if (Sys.info()["user"] == "william.midgley") {
   cat("Hi Will!\n")
   setwd("~/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity/pregnancy")
@@ -13,61 +14,81 @@ if (Sys.info()["user"] == "william.midgley") {
   cat("Is that you, Utkarsh?! Add your name here\n") 
 }
 
+# delete everything in R's environment
 rm(list = ls())
 
+# unload any loaded packages
 if (!is.null(sessionInfo()$otherPkgs)) {
-  suppressWarnings(
-    invisible(
-      lapply(
-        paste0('package:', names(sessionInfo()$otherPkgs)
-          ),
-        detach,
-        character.only=TRUE,
-        unload=TRUE
-        )
-      )
+  suppressWarnings(invisible(
+    lapply(
+      paste0('package:', names(sessionInfo()$otherPkgs)),
+      detach,
+      character.only = TRUE,
+      unload = TRUE
     )
+  ))
 }
 
-# ==========================================================================
-# Load
-# ==========================================================================
-
+# load packages
 pkgs <- c(
-  "tidyverse",
   "beepr",
+  "dplyr",
+  "eulerr",
+  "forcats",
+  "ggplot2",
+  "grid",
   "janitor",
   "lubridate",
   "patchwork",
   "readr",
+  "readxl",
   "scales",
-  "stringr"
-  )
+  "stringr",
+  "tidyr"
+)
 
 for (pkg in pkgs) {
   suppressWarnings(
     suppressPackageStartupMessages(
       library(pkg, character.only = TRUE)
-      )
     )
+  )
 }
 
-# England
-d_weekly_england <- read.csv("data_weekly_vacc/england/england_preg_weekly_vacc.csv")
-# Wales
-d_weekly_wales_c19 <- read.csv("data_weekly_vacc/wales/wales_preg_weekly_vacc_c19.csv")
-d_weekly_wales_flu <- read.csv("data_weekly_vacc/wales/wales_preg_weekly_vacc_flu.csv")
+rm(pkg, pkgs)
 
-cbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-cbPalette2 <- c("#0072B2", "#D55E00", "#CC79A7", "#E69F00", "#56B4E9", "#009E73", "#F0E442")
+
+# ==========================================================================
+# Lookups 
+# ==========================================================================
+
+cbPalette <- c(
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442",
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7"
+)
+
+cbPalette2 <- c(
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7",
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442"
+)
 
 
 # ==========================================================================
 # Process England data
 # ==========================================================================
-cat("processing...\n")
+cat("Load England\n")
 
-process.england <- function(data) { # nolint
+clean_england <- function(data) { # nolint
   data %>%
     mutate(
       vacc_seq =
@@ -94,14 +115,23 @@ process.england <- function(data) { # nolint
     )
 }
 
-d_weekly_england_c19 <- process.england(d_weekly_england) %>% filter(vacc_type == "c19")
-d_weekly_england_flu <- process.england(d_weekly_england) %>% filter(vacc_type == "flu")
+d_c19_eng <-
+  read.csv("data_weekly_vacc/england/england_preg_weekly_vacc.csv") %>% 
+  clean_england() %>%
+  filter(vacc_type == "c19")
+
+d_flu_eng <-
+  read.csv("data_weekly_vacc/england/england_preg_weekly_vacc.csv") %>%
+  clean_england() %>%
+  filter(vacc_type == "flu")
+
 
 # ==========================================================================
 # Process Wales data
 # ==========================================================================
+cat("Load Wales\n")
 
-process.wales <- function(data) {
+clean_wales <- function(data) {
   data %>% mutate(
     vacc_seq = case_when(
       vacc_type == "flu" ~ paste0("20",vacc_seq),
@@ -113,63 +143,35 @@ process.wales <- function(data) {
     select(-n)
 }
 
-d_weekly_wales_c19 <- process.wales(d_weekly_wales_c19)
-d_weekly_wales_flu <- process.wales(d_weekly_wales_flu)
+d_c19_wales <-
+  read.csv("data_weekly_vacc/wales/wales_preg_weekly_vacc_c19.csv") %>% 
+  clean_wales()
+
+d_flu_wales <-
+  read.csv("data_weekly_vacc/wales/wales_preg_weekly_vacc_flu.csv") %>% 
+  clean_wales()
+
 
 # ==========================================================================
 # Pool England and Wales
 # ==========================================================================
 cat("Pooling data...\n")
 
-pool.data <- function(england, wales) {
-  full_join(england, wales) %>%
+pool <- function(england, wales) {
+  full_join(england, wales, join_by(vacc_seq, vacc_date, vacc_type)) %>%
+  as_tibble() %>% 
   mutate(
-    n_wales = replace_na(n_wales, 0),
+    vacc_seq  = factor(vacc_seq),
+    vacc_seq  = fct_rev(vacc_seq),
+    n_wales   = replace_na(n_wales, 0),
     n_england = replace_na(n_england, 0),
-    n = n_wales + n_england
+    n         = n_wales + n_england
   )
 }
 
-d_weekly_pooled_c19 <- pool.data(d_weekly_england_c19, d_weekly_wales_c19)
-d_weekly_pooled_flu <- pool.data(d_weekly_england_flu, d_weekly_wales_flu)
+d_c19_pool <- pool(d_c19_eng, d_c19_wales)
+d_flu_pool <- pool(d_flu_eng, d_flu_wales)
 
-# ==========================================================================
-# Make a pretty table
-# ==========================================================================
-
-d_weekly_pooled_pretty_c19 <- d_weekly_pooled_c19 %>%
-  mutate(
-    `Vaccination date` = vacc_date,
-    `COVID-19 Dose` = str_replace(vacc_seq, "dose", ""),
-    `Pooled n (COVID-19)` = n,
-    `England n (COVID-19)` = n_england,
-    `Wales n (COVID-19)` = n_wales
-    ) %>%
-  select(
-    `Vaccination date`,
-    `COVID-19 Dose`,
-    `Pooled n (COVID-19)`,
-    `England n (COVID-19)`,
-    `Wales n (COVID-19)`
-    )
-
-d_weekly_pooled_pretty_flu <- d_weekly_pooled_flu %>%
-  mutate(
-    `Vaccination date` = vacc_date,
-    `Influenza season` = vacc_seq,
-    `Pooled n (flu)` = n,
-    `England n (flu)` = n_england,
-    `Wales n (flu)` = n_wales
-    ) %>%
-  select(
-    `Vaccination date`,
-    `Influenza season`,
-    `Pooled n (flu)`,
-    `England n (flu)`,
-    `Wales n (flu)`
-    )
-
-d_weekly_pooled_pretty <- full_join(d_weekly_pooled_pretty_c19, d_weekly_pooled_pretty_flu, by = "Vaccination date")
 
 # ==========================================================================
 # Plotting graphs
@@ -182,66 +184,55 @@ x_limits <- c(
   ymd("2022-03-31")
 )
 
-x_breaks <- seq(
-  from = ymd('2020-09-01'),
-  to   = ymd('2022-03-31'),
-  by   = "3 months"
-)
-
 y_limits <- c(0, 1100)
 
 my_theme <- function() {
   theme_bw(base_size = 10) +
   theme(
-    panel.grid.minor.x   = element_blank(),
-    panel.grid.minor.y   = element_blank(),
+    axis.title.x         = element_blank(),
     legend.title         = element_blank(),
     legend.position      = c(0.99, 0.97),
     legend.justification = c(1, 1),
     legend.key.height    = unit(1, "lines"),
     legend.key.width     = unit(1, "lines"),
     legend.margin        = margin(t=-0.25,l=0.05,b=0.0,r=0.05, unit='cm'),
-    axis.title.x         = element_blank()
+    panel.grid.minor.x   = element_blank(),
+    panel.grid.minor.y   = element_blank(),
+    plot.title           = element_text(size = 10, face = "bold"),
+    plot.title.position  = "plot"
   )
 }
 
 
-p_weekly_pooled_c19 <-
-  d_weekly_pooled_c19 %>%
-  as_tibble() %>% 
-  mutate(
-    vacc_seq = factor(vacc_seq),
-    vacc_seq = fct_rev(vacc_seq)
-  ) %>% 
+p_c19 <-
+  d_c19_pool %>%
   ggplot(aes(
-    x = vacc_date,
-    y = n,
+    x    = vacc_date,
+    y    = n,
     fill = vacc_seq
   )) +
   geom_col() +
   scale_x_date(
     limits = x_limits,
-    breaks = x_breaks,
+    date_breaks = "2 months",
     date_labels = "%b\n%Y"
   ) +
   scale_y_continuous(
-    name = "COVID-19 vaccinations",
+    name = "Number per week",
     limits = y_limits,
     breaks = breaks_pretty(),
     labels = comma
   ) +
   scale_fill_manual(
     values = cbPalette[3:1],
-    labels = c("Dose 3", "Dose 2", "Dose 1")
+    labels = c("Dose 3", "Dose 2", "Dose 1"),
+    guide = guide_legend(reverse = TRUE)
   ) +
-  my_theme() +
-  theme(
-    axis.text.x = element_blank(),
-    axis.ticks.x = element_blank()
-  )
+  ggtitle("(a) COVID-19 vaccination") +
+  my_theme()
 
-p_weekly_pooled_flu <-
-  d_weekly_pooled_flu %>%
+p_flu <-
+  d_flu_pool %>%
   ggplot(aes(
     x = vacc_date,
     y = n,
@@ -250,49 +241,40 @@ p_weekly_pooled_flu <-
   geom_col() +
   scale_x_date(
     limits = x_limits,
-    breaks = x_breaks,
+    date_breaks = "2 months",
     date_labels = "%b\n%Y"
   ) +
   scale_y_continuous(
-    name =  "Influenza vaccinations",
+    name =  "Number per week",
     limits = y_limits,
     breaks = breaks_pretty(),
     labels = comma
   ) +
   scale_fill_manual(
     values = cbPalette2,
-    labels = c("Winter 2020/21", "Winter 2021/22")
+    labels = c("Winter 2020/21", "Winter 2021/22"),
+    guide = guide_legend(reverse = TRUE)
   ) +
+  ggtitle("(b) Influenza vaccination") +
   my_theme()
 
-p_weekly_pooled <-
-  p_weekly_pooled_c19 +
-  plot_spacer() +
-  p_weekly_pooled_flu +
+p_c19_flu <-
+  p_c19 +
+  p_flu +
   plot_layout(
-    ncol = 1,
-    heights = c(15, -1.5, 15)
-  ) +
-  plot_annotation(
-    title = "Weekly vaccine uptake"
+    ncol = 1
   )
 
-p_weekly_pooled
+print(p_c19_flu)
 
 # ==========================================================================
 # Save plots
 # ==========================================================================
 cat("saving...\n")
 
-write_csv(
-  d_weekly_pooled_pretty,
-  file = "data_weekly_vacc/pool_preg_weekly_vacc.csv"
-  )
-
 ggsave(
-  plot     = p_weekly_pooled,
-  filename = "pool_main_weekly_vacc.png",
-  path     = "plots",
-  width    = 7.5,
+  plot     = p_c19_flu,
+  filename = "plots/pool_main_weekly_vacc.png",
+  width    = 5.2,
   height   = 5
 )

@@ -1,8 +1,9 @@
 # ==========================================================================
 # Clear environment
 # ==========================================================================
-cat("Clear and load!\n")
+cat("clear\n")
 
+# set working directory
 if (Sys.info()["user"] == "william.midgley") {
   cat("Hi Will!\n")
   setwd("~/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity/pregnancy")
@@ -13,49 +14,56 @@ if (Sys.info()["user"] == "william.midgley") {
   cat("Is that you, Utkarsh?! Add your name here\n") 
 }
 
+# delete everything in R's environment
 rm(list = ls())
 
+# unload any loaded packages
 if (!is.null(sessionInfo()$otherPkgs)) {
-  suppressWarnings(
-    invisible(
-      lapply(
-        paste0('package:', names(sessionInfo()$otherPkgs)
-          ),
-        detach,
-        character.only=TRUE,
-        unload=TRUE
-        )
-      )
+  suppressWarnings(invisible(
+    lapply(
+      paste0('package:', names(sessionInfo()$otherPkgs)),
+      detach,
+      character.only = TRUE,
+      unload = TRUE
     )
+  ))
 }
 
-# ==========================================================================
-# Load
-# ==========================================================================
-
+# load packages
 pkgs <- c(
-  "tidyverse",
   "beepr",
+  "dplyr",
   "eulerr",
+  "forcats",
+  "ggplot2",
   "grid",
+  "gridGraphics",
   "janitor",
+  "lubridate",
   "patchwork",
   "readr",
+  "readxl",
   "scales",
-  "stringr"
-  )
+  "stringr",
+  "tidyr"
+)
 
 for (pkg in pkgs) {
   suppressWarnings(
     suppressPackageStartupMessages(
       library(pkg, character.only = TRUE)
-      )
     )
+  )
 }
+
+rm(pkg, pkgs)
+
+
 
 # ==========================================================================
 # Load data
 # ==========================================================================
+cat("load data\n")
 
 # England
 t_venn_england <- read.csv("data_venn_diagram/england/england_preg_crosstabs.csv") %>% na.omit()
@@ -88,20 +96,25 @@ t_venn_england <-
 # ==========================================================================
 # Pool England and Wales
 # ==========================================================================
-cat("pooling data...\n")
+cat("pool england and wales\n")
 
 t_venn_pooled <-
-full_join(t_venn_england, t_venn_wales) %>% mutate(
-  n = n_wales+n_england
-  ) %>% select(-n_england, -n_wales)
+  t_venn_england %>% 
+  full_join(t_venn_wales, join_by(c19_complete, flu_complete)) %>%
+  mutate(
+    n = n_wales + n_england
+  ) %>%
+  select(
+    -n_england,
+    -n_wales
+  ) %>% 
+  mutate(
+    p = n / sum(n),
+    p_pretty = percent(p, accuracy = 0.1)
+  )
 
-t_venn_pooled$p <- round(t_venn_pooled$n/sum(t_venn_pooled$n) * 100,1)
 
-# ==========================================================================
-# Turn tables into a df 
-# ==========================================================================
-
-# Main cohort
+# Turn aggregate tables into individual-level data
 
 l_venn_pooled <- list()
 
@@ -115,104 +128,49 @@ for (i in 1:nrow(t_venn_pooled)) {
 
 d_venn_pooled <-
   bind_rows(l_venn_pooled) %>%
-    mutate(
-      neither = !c19_flg & !flu_flg
-    )
+  mutate(neither = !c19_flg & !flu_flg)
 
 # ==========================================================================
-# Plot a good ol' fashion bar chart
+# Plot the diagram
 # ==========================================================================
-
-p_bar <-
-    t_venn_pooled %>%
-  mutate(
-    vacc_cat = case_when(
-      c19_complete == 1 & flu_complete == 1 ~ "Both",
-      c19_complete == 1 & flu_complete == 0 ~ "C19 only",
-      c19_complete == 0 & flu_complete == 1 ~ "Flu only",
-      c19_complete == 0 & flu_complete == 0 ~ "Neither"
-    ),
-    vacc_cat = factor(vacc_cat, c("Neither", "C19 only", "Flu only", "Both"))
-  ) %>% 
-  ggplot(aes(
-    x = vacc_cat,
-    y = p / 100,
-  )) +
-  geom_col() +
-  scale_y_continuous(
-    name = "Uptake",
-    label = percent
-  )
-
-p_bar
+cat("Plot\n")
 
 
-# ==========================================================================
-# Make a pretty crosstab
-# ==========================================================================
+d_venn_pooled %>% 
+euler() %>%
+plot(
+  fills = list(fill = c("#fb8072", "#80b1d3", "#d9d9d9")),
+  edges = list(lwd = 1),
+  labels = c("", "", "")
+) %>% 
+print()
 
-crosstab <- function(data) {
-  ct <- data
+# labels
+grid.text("COVID-19", gp=gpar(fontsize = 10, fontface="bold"), x=0.093, y=0.485)
+grid.text("Both",     gp=gpar(fontsize = 10, fontface="bold"), x=0.285, y=0.485)
+grid.text("Flu",      gp=gpar(fontsize = 10, fontface="bold"), x=0.485, y=0.485)
+grid.text("Neither",  gp=gpar(fontsize = 10, fontface="bold"), x=0.780, y=0.485)
 
-  if (is.null(ct$p)) {
-    colnames(ct) <- c("c19_complete", "flu_complete", "n")
-    ct$p <- round(ct$n/sum(ct$n) * 100,1)
-  }
+# percentages
+grid.text(t_venn_pooled$p_pretty[2], gp=gpar(fontsize = 10), x=0.093, y=0.425)
+grid.text(t_venn_pooled$p_pretty[1], gp=gpar(fontsize = 10), x=0.285, y=0.425)
+grid.text(t_venn_pooled$p_pretty[3], gp=gpar(fontsize = 10), x=0.485, y=0.425)
+grid.text(t_venn_pooled$p_pretty[4], gp=gpar(fontsize = 10), x=0.780, y=0.425)
 
-  ct <- ct %>% 
-  mutate(
-    vacc_cat = case_when(
-      c19_complete == 1 & flu_complete == 1 ~ "Both",
-      c19_complete == 1 & flu_complete == 0 ~ "COVID-19 only",
-      c19_complete == 0 & flu_complete == 1 ~ "Influenza only",
-      c19_complete == 0 & flu_complete == 0 ~ "Neither"
-    ),
-    vacc_cat = factor(vacc_cat, c("Neither", "COVID-19 only", "Influenza only", "Both"))
-  ) %>% 
-  mutate(
-    n = round_half_up(n, -1),
-    n = comma(n),
-    p = percent(p, accuracy = 0.1, scale = 1),
-    np = str_c(n, " (", p, ")")
-  ) %>% 
-  select(
-    vacc_cat,
-    np
-  )
-  colnames(ct) <- c("Vaccine", str_replace(paste0(deparse(substitute(data))), "t_venn_(.+)", "\\1") %>% str_to_title())
-  return(ct)
-}
+# save the plot
+p_c19_flu_euler <- grid.grab()
 
-pool_crosstabs <- cbind(
-  crosstab(t_venn_pooled),
-  crosstab(t_venn_england)["England"],
-  crosstab(t_venn_wales)["Wales"]
-  )
-# ==========================================================================
-# Plot the venn diagram
-# ==========================================================================
-cat("Time to start plotting!\n")
+grid.draw(p_c19_flu_euler)
 
-
-euler(d_venn_pooled) %>% plot(counts = TRUE, labels = c("COVID", "Flu", "Neither"), main = "Relative Vaccine uptake")
-grid.text(paste0(t_venn_pooled$p[2], "%"), x=0.093, y=0.46) # covid only %
-grid.text(paste0(t_venn_pooled$p[1], "%"), x=0.285, y=0.465) # flu & covid %
-grid.text(paste0(t_venn_pooled$p[3], "%"), x=0.485, y=0.465) # flu only %
-grid.text(paste0(t_venn_pooled$p[4], "%"), x=0.78, y=0.45) # neither %
-p_venn_pooled <- recordPlot()
-
-print(p_venn_pooled)
 
 # ==========================================================================
 # Save plots
 # ==========================================================================
-cat("Saving...\n")
+cat("Save\n")
 
-png("plots/pool_preg_venn.png", width = 600, height = 600)
-p_venn_pooled
-dev.off()
-
-write_csv(
-  pool_crosstabs,
-  file = "data_venn_diagram/pool_preg_crosstabs.csv"
+ggsave(
+  plot     = p_c19_flu_euler,
+  filename = "plots/pool_preg_venn.png",
+  width    = 5.2,
+  height   = 2.3
 )

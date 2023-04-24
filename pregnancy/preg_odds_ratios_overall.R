@@ -29,7 +29,16 @@ if (!is.null(sessionInfo()$otherPkgs)) {
     )
 }
 
-cbPalette <- c("#0072B2", "#E69F00", "#009E73", "#F0E442", "#56B4E9", "#D55E00", "#CC79A7")
+cbPalette <- c(
+  "#0072B2",
+  "#E69F00",
+  "#009E73",
+  "#F0E442",
+  "#56B4E9",
+  "#D55E00",
+  "#CC79A7"
+)
+
 
 # ==========================================================================
 # Load
@@ -73,30 +82,30 @@ d_meta_or <- d_meta_or[,2:ncol(d_meta_or)]
 d_meta_or <- d_meta_or %>% mutate(
     xlbl = case_when(
         xvar == "Ethnicity" & xlbl == "Male" ~ "Mixed",
-        xlbl == "2"                          ~ "2 members",
-        xlbl == "hh 1"                       ~ "Alone",
-        xlbl == "hh 3"                       ~ "3 members",
-        xlbl == "hh 4"                       ~ "4 members",
-        xlbl == "hh 5"                       ~ "5 members",
-        xlbl == "hh 6-10"                    ~ "6-10 members",
-        xlbl == "hh 7+"                      ~ "11+ members",
-        xlbl == "imd 5 - Least deprived"     ~ "5th (Least deprived)",
-        xlbl == "imd 1 - Most deprived"      ~ "1st (Most deprived)",
+        xlbl == "2"                          ~ "2",
+        xlbl == "hh 1"                       ~ "1",
+        xlbl == "hh 3"                       ~ "3",
+        xlbl == "hh 4"                       ~ "4",
+        xlbl == "hh 5"                       ~ "5",
+        xlbl == "hh 6-10"                    ~ "6-10",
+        xlbl == "hh 7+"                      ~ "11+",
+        xlbl == "imd 5 - Least deprived"     ~ "5th (Least)",
         xlbl == "imd 2"                      ~ "2nd",
         xlbl == "imd 3"                      ~ "3rd",
         xlbl == "imd 4"                      ~ "4th",
-        xlbl == "rsk 0"                      ~ "No conditions",
-        xlbl == "rsk 1"                      ~ "1 condition",
-        xlbl == "rsk 2"                      ~ "2 conditions",
-        xlbl == "rsk 3"                      ~ "3 conditions",
-        xlbl == "rsk 4+"                     ~ "4+ conditions",
+        xlbl == "imd 1 - Most deprived"      ~ "1st (Most)",
+        xlbl == "rsk 0"                      ~ "0",
+        xlbl == "rsk 1"                      ~ "1",
+        xlbl == "rsk 2"                      ~ "2",
+        xlbl == "rsk 3"                      ~ "3",
+        xlbl == "rsk 4+"                     ~ "4+",
         TRUE                                 ~ xlbl
         ),
     xvar = case_when(
-        xvar == "Urban/rural" ~ "Urban/rural class",
-        xvar == "Number of household members" ~ "Household composition",
-        xvar == "No. QCovid comorbidities" ~ "No. of clinical conditions",
-        xvar == "SES quintile" ~ "IMD quintile",
+        xvar == "Urban/rural"                 ~ "Urban/rural area",
+        xvar == "Number of household members" ~ "Household size",
+        xvar == "No. QCovid comorbidities"    ~ "Number of comorbidities",
+        xvar == "SES quintile"                ~ "Deprivation quintile",
         TRUE ~ xvar
         )
     )
@@ -108,60 +117,56 @@ colnames(d_meta_or) <- c("xvar", "xlbl", "or", "or_low", "or_high", "vacc")
 
 
 lkp_xvar <- c(
-    "IMD\nquintile"                  = "IMD quintile",
-    "Age"                            = "Age",
-    "Sex"                            = "Sex",
-    "Ethnicity"                      = "Ethnicity",
-    "BMI"                            = "BMI",
-    "Household\ncomposition"         = "Household composition",
-    "Urban/rural\nclass"             = "Urban/rural class",
-    "No. of clinical\nconditions"    = "No. of clinical conditions"
+  "Age"                      = "Age",
+  "Sex"                      = "Sex",
+  "Ethnicity"                = "Ethnicity",
+  "BMI"                      = "BMI",
+  "Number of\ncomorbidities" = "Number of comorbidities",
+  "Household\nsize"          = "Household size",
+  "Deprivation\nquintile"    = "Deprivation quintile",
+  "Urban/rural\narea"        = "Urban/rural area"
 )
 
 lkp_xlbls <- c(
     # wimd
-    "1st (Most deprived)",
-    "2nd",
-    "3rd",
-    "4th",
-    "5th (Least deprived)",
-    # age
-    "18-24",
-    "25-29",
-    "30-34",
-    "35-39",
-    "40-49",
-    # BMI
-    "<18.5",
-    "18.5-24.9",
-    "25.0-29.9",
-    "30.0-39.9",
-    "40.0+",
-    "(BMI missing)",
-    # ethnicity
-    "White",
-    "Asian",
-    "Black",
-    "Mixed",
-    "Other",
-    "(Ethnicity missing)",
-    # house hold
-    "Alone",
-    "2 members",
-    "3 members",
-    "4 members",
-    "5 members",
-    "6-10 members",
-    "11+ members",
-    # clin conditions
-    "No conditions",
-    "1 condition",
-    "2 conditions",
-    "3 conditions",
-    "4+ conditions",
-    # Rurality
-    "Urban",
-    "Rural")
+  "5th (Least)",
+  "4th",
+  "3rd",
+  "2nd",
+  "1st (Most)",
+  # age
+  "18-24",
+  "25-29",
+  "30-34",
+  "35-39",
+  "40-49",
+  # BMI
+  "<18.5",
+  "18.5-24.9",
+  "25.0-29.9",
+  "30.0-39.9",
+  "40.0+",
+  # ethnicity
+  "White",
+  "Asian",
+  "Black",
+  "Mixed",
+  "Other",
+  # household / comorbidities
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "4+",
+  "5",
+  "6-10",
+  "11+",
+  # Rurality
+  "Urban",
+  "Rural"
+) %>% 
+unique()
 
 lkp_model_type <- c(
     "Adjusted"   = "adj",
@@ -170,8 +175,8 @@ lkp_model_type <- c(
 )
 
 lkp_vacc <- c(
-    "COVID-19"  = "c19",
-    "Influenza" = "flu"
+    "(a) COVID-19 vaccination"  = "c19",
+    "(b) Influenza vaccination" = "flu"
 )
 
 
@@ -222,42 +227,60 @@ d_meta_or_pretty <- full_join(d_meta_or_pretty_c19, d_meta_or_pretty_flu)
 # Plot
 # ==========================================================================
 
-d_meta_or <- d_meta_or %>% mutate(
+d_meta_or <-
+  d_meta_or %>%
+  mutate(
     model_type = case_when(
         or == 1 & or_low == 1 & or_high == 1 ~ "ref",
         TRUE ~ "adj"
-        )
     )
+  )
 
 p_meta_or <-
-d_meta_or %>%
-    filter(xvar %in% lkp_xvar) %>%
-    filter(!is.na(model_type)) %>%
-    mutate(
-        xvar = factor(xvar, lkp_xvar, names(lkp_xvar)),
-        xlbl = xlbl %>% fct_relevel(lkp_xlbls),
-        model_type = factor(model_type, lkp_model_type, names(lkp_model_type)),
-        vacc = factor(vacc, lkp_vacc, names(lkp_vacc))
-    ) %>%
-ggplot(aes(
-        x = or, xmin = or_low, xmax = or_high,
-        y = xlbl,
-        group = model_type, colour = model_type
-    )) +
-    facet_grid(xvar ~ vacc, scales = "free_y", space = "free_y", switch = "y") +
-    geom_vline(xintercept = 1) +
-    geom_pointrange(position = position_dodge(0.4)) +
-    scale_colour_manual(values = cbPalette) +
-    coord_cartesian(xlim = c(0, 2)) +
-    theme(
-        legend.position = "none",
-        axis.title.y = element_blank(),
-        strip.placement = "outside",
-        strip.text.y.left = element_text(angle = 0)
-    ) +
-    ggtitle("ORs for vaccine uptake by type")
+  d_meta_or %>%
+  filter(xvar %in% lkp_xvar) %>%
+  filter(!is.na(model_type)) %>%
+  mutate(
+      xvar = factor(xvar, lkp_xvar, names(lkp_xvar)),
+      xlbl = xlbl %>% fct_relevel(lkp_xlbls),
+      model_type = factor(model_type, lkp_model_type, names(lkp_model_type)),
+      vacc = factor(vacc, lkp_vacc, names(lkp_vacc))
+  ) %>%
+  ggplot(aes(
+      x = or, xmin = or_low, xmax = or_high,
+      y = xlbl,
+      group = model_type,
+      colour = model_type,
+      shape = model_type
+  )) +
+  facet_grid(xvar ~ vacc, scales = "free_y", space = "free_y", switch = "y") +
+  geom_vline(xintercept = 1, linetype = 2) +
+  geom_pointrange(size = 0.34) +
+  scale_x_continuous(
+    name = "Adjusted odds ratio (95% CI)",
+    breaks = pretty_breaks()
+  ) +
+  scale_colour_manual(
+    values = c(cbPalette[1], "#000000")
+  ) +
+  scale_shape_manual(
+    values = c(19, 15)
+  ) +
+  theme_bw(
+    base_size = 10
+  ) +
+  theme(
+      axis.title.y       = element_blank(),
+      legend.position    = "none",
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      strip.placement    = "outside",
+      strip.text.x       = element_text(face = "bold"),
+      strip.text.y.left  = element_text(angle = 0, face = "bold"),
+      strip.background   = element_blank()
+  )
 
-p_meta_or
+print(p_meta_or)
 
 # ==========================================================================
 # Save plot
@@ -273,6 +296,6 @@ ggsave(
   plot     = p_meta_or,
   filename = "meta_main_coefs_overall.png",
   path     = "plots",
-  width    = 10,
-  height   = 10
+  width    = 5.2,
+  height   = 6
 )

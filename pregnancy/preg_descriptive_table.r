@@ -1,8 +1,9 @@
 # ==========================================================================
 # Clear environment
 # ==========================================================================
-cat("Clear and load!\n")
+cat("clear\n")
 
+# set working directory
 if (Sys.info()["user"] == "william.midgley") {
   cat("Hi Will!\n")
   setwd("~/dcp02_covid_v_flu_coverage_disparities/dacvap-c19-flu-vaccine-disparity/pregnancy")
@@ -13,26 +14,22 @@ if (Sys.info()["user"] == "william.midgley") {
   cat("Is that you, Utkarsh?! Add your name here\n") 
 }
 
+# delete everything in R's environment
 rm(list = ls())
 
+# unload any loaded packages
 if (!is.null(sessionInfo()$otherPkgs)) {
-  suppressWarnings(
-    invisible(
-      lapply(
-        paste0('package:', names(sessionInfo()$otherPkgs)
-          ),
-        detach,
-        character.only=TRUE,
-        unload=TRUE
-        )
-      )
+  suppressWarnings(invisible(
+    lapply(
+      paste0('package:', names(sessionInfo()$otherPkgs)),
+      detach,
+      character.only = TRUE,
+      unload = TRUE
     )
+  ))
 }
 
-# ==========================================================================
-# Load
-# ==========================================================================
-
+# load packages
 pkgs <- c(
   "tidyverse",
   "beepr",
@@ -41,9 +38,10 @@ pkgs <- c(
   "janitor",
   "patchwork",
   "readr",
+  "readxl",
   "scales",
   "stringr"
-  )
+)
 
 for (pkg in pkgs) {
   suppressWarnings(
@@ -53,216 +51,221 @@ for (pkg in pkgs) {
     )
 }
 
-# ==========================================================================
-# Load data
-# ==========================================================================
+rm(pkg, pkgs)
 
-d_pool_desc_c19 <- read.csv("data_descriptive_tables/pool_preg_descriptive_c19.csv")
-d_pool_desc_flu <- read.csv("data_descriptive_tables/pool_preg_descriptive_flu.csv")
-
-d_pool_desc_c19 <- d_pool_desc_c19[-1, c(1, 6, 11:13)]
-d_pool_desc_flu <- d_pool_desc_flu[-1, c(1, 6, 11:13)]
-
-colnames(d_pool_desc_c19) <- c("xvar", "xlbl", "n_c19_complete", "n", "perc_c19_complete")
-colnames(d_pool_desc_flu) <- c("xvar", "xlbl", "n_flu_complete", "n", "perc_flu_complete")
-
-
-total_c19 <- tribble(~xvar, ~xlbl, ~n_c19_complete, ~n,
-  "total",
-  "Total",
-  d_pool_desc_c19 %>%
-    filter(xvar == "IMDQuintile") %>%
-    mutate(n = as.numeric(n_c19_complete)) %>%
-    select(n) %>%
-    sum(),
-  d_pool_desc_c19 %>%
-    filter(xvar == "IMDQuintile") %>%
-    mutate(n = as.numeric(n)) %>%
-    select(n) %>%
-    sum()
-    ) %>% mutate(
-      perc_c19_complete = round(n_c19_complete*100/n, 1)
-    )
-
-total_flu <- tribble(~xvar, ~xlbl, ~n_flu_complete, ~n,
-  "total",
-  "Total",
-  d_pool_desc_flu %>%
-    filter(xvar == "IMDQuintile") %>%
-    mutate(n = as.numeric(n_flu_complete)) %>%
-    select(n) %>%
-    sum(),
-  d_pool_desc_flu %>%
-    filter(xvar == "IMDQuintile") %>%
-    mutate(n = as.numeric(n)) %>%
-    select(n) %>%
-    sum()
-    ) %>% mutate(
-      perc_flu_complete = round(n_flu_complete*100/n, 1)
-    )
-
-d_pool_desc_c19 <-
-  d_pool_desc_c19 %>% rbind(
-    total_c19
-    )
-
-d_pool_desc_flu <-
-  d_pool_desc_flu %>% rbind(
-    total_flu
-    )
 
 # ==========================================================================
-# lkps
+# Lookup tables
 # ==========================================================================
+cat("lookups\n")
 
-lkp_xvar_table <- c(
-    "Total"                          = "total",
-    "IMD quintile"                   = "IMDQuintile",
-    "Age"                            = "age_cat",
-    "Sex"                            = "gndr_cd",
-    "Ethnicity"                      = "Ethnicity",
-    "BMI"                            = "bmi_cat",
-    "Household composition"          = "household_n_cat",
-    "Urban/rural class"              = "UrbanRural",
-    "No. of clinical conditions"     = "nrg_cat"
+lkp_xvar_xlbl <-
+  read_xlsx("lookup_xvar_xlbl.xlsx") %>% 
+  mutate(
+    new_name = fct_inorder(new_name)
+  )
+
+lkp_model <- c(
+  "Adjusted"   = "adj",
+  "Unadjusted" = "unadj",
+  "Reference"  = "ref"
 )
 
 
-lkp_model_type <- c(
-    "Adjusted"   = "adj",
-    "Unadjusted" = "unadj",
-    "Reference"  = "ref"
-)
-
-lkp_xlbls <- c("Total",
-            # wimd
-            "1st (Most deprived)",
-            "2nd",
-            "3rd",
-            "4th",
-            "5th (Least deprived)",
-            # age
-            "18-24",
-            "25-29",
-            "30-34",
-            "35-39",
-            "40-49",
-            # BMI
-            "<18.5",
-            "18.5-24.9",
-            "25-29.9",
-            "30-39.9",
-            "40.0+",
-            "(BMI missing)",
-            # ethnicity
-            "White",
-            "Asian",
-            "Black",
-            "Mixed",
-            "Other",
-            "(Ethnicity missing)",
-            # house hold
-            "Alone",
-            "2 members",
-            "3 members",
-            "4 members",
-            "5 members",
-            "6-10 members",
-            "11+ members",
-            # clin conditions
-            "No conditions",
-            "1 condition",
-            "2 conditions",
-            "3 conditions",
-            "4+ conditions",
-            # Rurality
-            "Urban",
-            "Rural")
 # ==========================================================================
-# Make pretty table
+# Process Covid-19 
 # ==========================================================================
+cat("c19\n")
 
-d_pool_desc_c19 <-
-d_pool_desc_c19 %>% 
-    mutate(
-      xlbl = paste0(xlbl),
-      xlbl = case_when(
-        xlbl == "(Missing)" ~ "(Ethnicity missing)",
-        xlbl == "missing"   ~ "(BMI missing)",
-        xlbl == "40+"       ~ "40.0+",
-        TRUE                ~ xlbl
-        ) %>% factor(levels = lkp_xlbls),
-      perc_c19_complete = format(as.numeric(perc_c19_complete), nsmall = 1),
-      n_c19_complete = format(as.numeric(n_c19_complete), big.mark = ",")
-    ) %>%
-    select(
-      xvar,
-      xlbl,
-      n,
-      n_c19_complete,
-      perc_c19_complete,
-    ) %>%
-    arrange(xlbl)
+# load pooled counts
+d_c19_desc <-
+  read_csv(
+    file = "data_descriptive_tables/pool_preg_descriptive_c19.csv",
+    skip = 1,
+    name_repair = make_clean_names,
+    show_col_types = FALSE
+  ) %>% 
+  select(
+    name,
+    value,
+    c19_total_n = total_n_2,
+    c19_event_n = covid_event_2
+  )
 
-d_pool_desc_c19_pretty <-
-    d_pool_desc_c19 %>% mutate(
-        Variable = factor(xvar, lkp_xvar_table, names(lkp_xvar_table)),
-        Category = xlbl,
-        `Total eligible for COVID-19 vaccination n` = n,
-        `Taken COVID-19 vaccination n (%)` = paste0(n_c19_complete, " (", perc_c19_complete, "%)")
-        ) %>%
-    select(
-        Variable,
-        Category,
-        `Total eligible for COVID-19 vaccination n`,
-        `Taken COVID-19 vaccination n (%)`
-        )
+# calc total
+d_c19_total <-
+  d_c19_desc %>% 
+  filter(name == "age_cat") %>% 
+  summarise(
+    c19_total_n = sum(c19_total_n),
+    c19_event_n = sum(c19_event_n)
+  ) %>% 
+  mutate(
+    name = "total",
+    value = "total"
+  ) %>% 
+  select(
+    name,
+    value,
+    c19_total_n,
+    c19_event_n
+  )
 
+# add total and format
+d_c19_desc <-
+  bind_rows(
+    d_c19_total,
+    d_c19_desc
+  ) %>% 
+  # clean variable names and category labels
+  left_join(
+    lkp_xvar_xlbl,
+    join_by(name, value)
+  ) %>% 
+  select(
+    xvar = new_name,
+    xlbl = new_value,
+    c19_total_n,
+    c19_event_n
+  ) %>% 
+  # round numbers to nearest 10
+  mutate(
+    c19_total_n = round_half_up(c19_total_n, -1),
+    c19_event_n = round_half_up(c19_event_n, -1)
+  ) %>% 
+  # add percentage
+  group_by(xvar) %>% 
+  mutate(
+    c19_total_p = c19_total_n / sum(c19_total_n),
+    c19_event_p = c19_event_n / sum(c19_event_n)
+  ) %>% 
+  ungroup() %>% 
+  # combine columns
+  mutate(
+    c19_total_np = str_glue(
+      "{n} ({p})",
+      n = format(c19_total_n, big.mark = ",", trim = TRUE),
+      p = percent(c19_total_p, accuracy = 0.1)
+    ),
+    c19_event_np = str_glue(
+      "{n} ({p})",
+      n = format(c19_event_n, big.mark = ",", trim = TRUE),
+      p = percent(c19_event_p, accuracy = 0.1)
+    )
+  ) %>% 
+  # final select
+  select(
+    xvar,
+    xlbl,
+    c19_total_np,
+    c19_event_np
+  )
 
-d_pool_desc_flu <-
-d_pool_desc_flu %>% 
-    mutate(
-      xlbl = paste0(xlbl),
-      xlbl = case_when(
-        xlbl == "(Missing)" ~ "(Ethnicity missing)",
-        xlbl == "missing"   ~ "(BMI missing)",
-        xlbl == "40+"       ~ "40.0+",
-        TRUE                ~ xlbl
-        ) %>% factor(levels = lkp_xlbls),
-      perc_flu_complete = format(as.numeric(perc_flu_complete), nsmall = 1),
-      n_flu_complete = format(as.numeric(n_flu_complete), big.mark = ",")
-    ) %>%
-    select(
-      xvar,
-      xlbl,
-      n,
-      n_flu_complete,
-      perc_flu_complete
-    ) %>%
-    arrange(xlbl)
-
-d_pool_desc_flu_pretty <-
-    d_pool_desc_flu %>% mutate(
-        Variable = factor(xvar, lkp_xvar_table, names(lkp_xvar_table)),
-        Category = xlbl,
-        `Total eligible for Influenza vaccination n` = n,
-        `Taken Influenza vaccination n (%)` = paste0(n_flu_complete, " (", perc_flu_complete, "%)")
-        ) %>%
-    select(
-        Variable,
-        Category,
-        `Total eligible for Influenza vaccination n`,
-        `Taken Influenza vaccination n (%)`
-        )
-
-d_pool_desc_pretty <- full_join(d_pool_desc_c19_pretty, d_pool_desc_flu_pretty)
 
 # ==========================================================================
-# Save plot
+# Process flu
 # ==========================================================================
-cat("Saving...\n")
+cat("flu\n")
+
+# load pooled counts
+d_flu_desc <-
+  read_csv(
+    file = "data_descriptive_tables/pool_preg_descriptive_flu.csv",
+    skip = 1,
+    name_repair = make_clean_names,
+    show_col_types = FALSE
+  ) %>% 
+  select(
+    name,
+    value,
+    flu_total_n = total_n_2,
+    flu_event_n = flu_event_2
+  )
+
+# calc total
+d_flu_total <-
+  d_flu_desc %>% 
+  filter(name == "age_cat") %>% 
+  summarise(
+    flu_total_n = sum(flu_total_n),
+    flu_event_n = sum(flu_event_n)
+  ) %>% 
+  mutate(
+    name = "total",
+    value = "total"
+  ) %>% 
+  select(
+    name,
+    value,
+    flu_total_n,
+    flu_event_n
+  )
+
+# add total and format
+d_flu_desc <-
+  bind_rows(
+    d_flu_total,
+    d_flu_desc
+  ) %>% 
+  # clean variable names and category labels
+  left_join(
+    lkp_xvar_xlbl,
+    join_by(name, value)
+  ) %>% 
+  select(
+    xvar = new_name,
+    xlbl = new_value,
+    flu_total_n,
+    flu_event_n
+  ) %>% 
+  # round numbers to nearest 10
+  mutate(
+    flu_total_n = round_half_up(flu_total_n, -1),
+    flu_event_n = round_half_up(flu_event_n, -1)
+  ) %>% 
+  # add percentage
+  group_by(xvar) %>% 
+  mutate(
+    flu_total_p = flu_total_n / sum(flu_total_n),
+    flu_event_p = flu_event_n / sum(flu_event_n)
+  ) %>% 
+  ungroup() %>% 
+  # combine columns
+  mutate(
+    flu_total_np = str_glue(
+      "{n} ({p})",
+      n = format(flu_total_n, big.mark = ",", trim = TRUE),
+      p = percent(flu_total_p, accuracy = 0.1)
+    ),
+    flu_event_np = str_glue(
+      "{n} ({p})",
+      n = format(flu_event_n, big.mark = ",", trim = TRUE),
+      p = percent(flu_event_p, accuracy = 0.1)
+    )
+  ) %>% 
+  # final select
+  select(
+    xvar,
+    xlbl,
+    flu_total_np,
+    flu_event_np
+  )
+
+
+# ==========================================================================
+# Combine
+# ==========================================================================
+cat("combine\n")
+
+d_c19_flu_desc <- full_join(d_c19_desc, d_flu_desc, join_by(xvar, xlbl))
+
+
+# ============================================================================
+# Save
+# ============================================================================
+cat("save\n")
 
 write_csv(
-  d_pool_desc_pretty,
+  d_c19_flu_desc,
   file = "data_descriptive_tables/pool_preg_descriptive_pretty.csv"
-  )
+)
